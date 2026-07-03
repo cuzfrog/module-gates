@@ -52,6 +52,7 @@ const defaultConfig: ModuleGateConfig = {
   sourceRoot: "",
   disableModuleInterfaceImportGate: false,
       disableSystemPrompt: false,
+      outputModuleProseOnBlock: false,
 };
 
 function makeDirent(name: string, isDir: boolean): Dirent {
@@ -150,6 +151,7 @@ describe("buildModuleIndex", () => {
       sourceRoot: "",
       disableModuleInterfaceImportGate: false,
       disableSystemPrompt: false,
+      outputModuleProseOnBlock: false,
     };
     const index = await buildModuleIndex(makeCtx("/project"), config);
 
@@ -177,6 +179,7 @@ describe("buildModuleIndex", () => {
       sourceRoot: "",
       disableModuleInterfaceImportGate: false,
       disableSystemPrompt: false,
+      outputModuleProseOnBlock: false,
     };
     const index = await buildModuleIndex(makeCtx("/project"), config);
 
@@ -333,6 +336,7 @@ describe("buildModuleIndex", () => {
       sourceRoot: "",
       disableModuleInterfaceImportGate: false,
       disableSystemPrompt: false,
+      outputModuleProseOnBlock: false,
     };
     const index = await buildModuleIndex(makeCtx("/project"), config);
     expect(index.contracts).toHaveLength(1);
@@ -378,6 +382,7 @@ describe("buildModuleIndex", () => {
       sourceRoot: "src/",
       disableModuleInterfaceImportGate: false,
       disableSystemPrompt: false,
+      outputModuleProseOnBlock: false,
     };
     const index = await buildModuleIndex(makeCtx("/project"), config);
 

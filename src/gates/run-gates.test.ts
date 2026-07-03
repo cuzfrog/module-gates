@@ -27,6 +27,7 @@ function cfg(over: Partial<ModuleGateConfig> = {}): ModuleGateConfig {
     sourceRoot: "",
     disableModuleInterfaceImportGate: false,
     disableSystemPrompt: false,
+    outputModuleProseOnBlock: false,
     ...over,
   };
 }
@@ -104,7 +105,7 @@ describe("runGates", () => {
 });
 
 describe("formatDenial", () => {
-  it("includes module prose when contract has prose", () => {
+  it("omits module prose when outputModuleProseOnBlock is false (default)", () => {
     const modulePath = path.join(tmp, "src");
     const index: ModuleIndex = {
       contracts: [
@@ -112,7 +113,21 @@ describe("formatDenial", () => {
       ],
       dirToModule: new Map([[modulePath, modulePath]]),
     };
-    const formatted = formatDenial("src/locked.ts", "Readonly rule", path.join(modulePath, "locked.ts"), index, tmp);
+    const formatted = formatDenial("src/locked.ts", "Readonly rule", path.join(modulePath, "locked.ts"), index, tmp, false);
+    expect(formatted).toContain("[Module Gate]");
+    expect(formatted).not.toContain("Greeting module.");
+    expect(formatted).not.toContain("Module contract");
+  });
+
+  it("includes module prose when outputModuleProseOnBlock is true", () => {
+    const modulePath = path.join(tmp, "src");
+    const index: ModuleIndex = {
+      contracts: [
+        { modulePath, descriptorFileName: "module.md", visible: null, readonly: ["locked.ts"], sealed: [], prose: "Greeting module." },
+      ],
+      dirToModule: new Map([[modulePath, modulePath]]),
+    };
+    const formatted = formatDenial("src/locked.ts", "Readonly rule", path.join(modulePath, "locked.ts"), index, tmp, true);
     expect(formatted).toContain("[Module Gate]");
     expect(formatted).toContain("Greeting module.");
   });
@@ -125,7 +140,7 @@ describe("formatDenial", () => {
       ],
       dirToModule: new Map([[modulePath, modulePath]]),
     };
-    const formatted = formatDenial("src/locked.ts", "Readonly rule", path.join(modulePath, "locked.ts"), index, tmp);
+    const formatted = formatDenial("src/locked.ts", "Readonly rule", path.join(modulePath, "locked.ts"), index, tmp, true);
     expect(formatted).toContain("MODULE.md");
   });
 });

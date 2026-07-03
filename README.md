@@ -120,7 +120,8 @@ Add a `module-gates` entry to `.pi/settings.json`:
   "module-gates": {
     "moduleDescriptorFileName": "MODULE.md",
     "moduleDescriptorReadonly": "file",
-    "sourceRoot": "src/"
+    "sourceRoot": "src/",
+    "outputModuleProseOnBlock": false
   }
 }
 ```
@@ -132,6 +133,7 @@ Add a `module-gates` entry to `.pi/settings.json`:
 | `sourceRoot` | `"src/"` | Directory to scan for descriptor files and enforce gates. Set to `""` to scan from project root. |
 | `disableModuleInterfaceImportGate` | `false` | When `true`, imports will not be forced to be from module interface. |
 | `disableSystemPrompt` | `false` | When `true`, skip injecting the module-gates hint into the agent's system prompt. |
+| `outputModuleProseOnBlock` | `false` | When `true`, the violating module descriptor's prose is appended to the block message so the agent sees the contract context. Disabled by default to keep the error message concise. |
 
 When no settings file exists or no `module-gates` key is present, defaults apply.
 

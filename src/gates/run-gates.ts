@@ -34,22 +34,22 @@ export function runGates(
 
   const readonlyResult = checkReadonly(filePath, index, cwd);
   if (readonlyResult.blocked) {
-    return { block: true, reason: formatDenial(filePath, readonlyResult.reason, absPath, index, cwd) };
+    return { block: true, reason: formatDenial(filePath, readonlyResult.reason, absPath, index, cwd, config.outputModuleProseOnBlock) };
   }
 
   const sealedResult = checkSealed(filePath, before, after, index, cwd);
   if (sealedResult.blocked) {
-    return { block: true, reason: formatDenial(filePath, sealedResult.reason, absPath, index, cwd) };
+    return { block: true, reason: formatDenial(filePath, sealedResult.reason, absPath, index, cwd, config.outputModuleProseOnBlock) };
   }
 
   const exportResult = checkExports(filePath, before, after, index, cwd);
   if (exportResult.blocked) {
-    return { block: true, reason: formatDenial(filePath, exportResult.reason, absPath, index, cwd) };
+    return { block: true, reason: formatDenial(filePath, exportResult.reason, absPath, index, cwd, config.outputModuleProseOnBlock) };
   }
 
   const importResult = checkModuleInterfaceImports(filePath, after, index, cwd, config.disableModuleInterfaceImportGate, config.sourceRoot);
   if (importResult.blocked) {
-    return { block: true, reason: formatDenial(filePath, importResult.reason, absPath, index, cwd) };
+    return { block: true, reason: formatDenial(filePath, importResult.reason, absPath, index, cwd, config.outputModuleProseOnBlock) };
   }
 
   return undefined;
@@ -89,6 +89,7 @@ function formatDenial(
   absPath: string,
   index: ModuleIndex,
   cwd: string,
+  outputModuleProseOnBlock: boolean,
 ): string {
   const modulePath = findOwningModule(absPath, index);
   const contract = modulePath
@@ -97,7 +98,7 @@ function formatDenial(
 
   let message = `[Module Gate] Write blocked — ${relPath}\n\n${reason}`;
 
-  if (contract && contract.prose) {
+  if (outputModuleProseOnBlock && contract && contract.prose) {
     const relModuleMd = path.relative(cwd, path.join(contract.modulePath, contract.descriptorFileName));
     message += `\n\nModule contract (${relModuleMd}):\n${contract.prose}`;
   }

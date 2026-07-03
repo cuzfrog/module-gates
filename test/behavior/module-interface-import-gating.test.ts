@@ -13,6 +13,7 @@ vi.mock("../../src/config.ts", () => ({
     sourceRoot: "",
     disableModuleInterfaceImportGate: false,
     disableSystemPrompt: false,
+    outputModuleProseOnBlock: false,
   }),
 }));
 

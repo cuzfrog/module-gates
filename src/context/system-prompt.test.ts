@@ -9,6 +9,7 @@ const baseConfig: ModuleGateConfig = {
   sourceRoot: "src/",
   disableModuleInterfaceImportGate: false,
   disableSystemPrompt: false,
+  outputModuleProseOnBlock: false,
 };
 
 describe("buildSystemPromptHint", () => {

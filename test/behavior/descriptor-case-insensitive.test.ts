@@ -26,6 +26,7 @@ function setConfig(over: Partial<ModuleGateConfig>): void {
     sourceRoot: "",
     disableModuleInterfaceImportGate: false,
     disableSystemPrompt: false,
+    outputModuleProseOnBlock: false,
     ...over,
   });
 }

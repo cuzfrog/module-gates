@@ -26,6 +26,7 @@ function setReadonlyMode(mode: ModuleGateConfig["moduleDescriptorReadonly"]): vo
     sourceRoot: "",
     disableModuleInterfaceImportGate: false,
     disableSystemPrompt: false,
+    outputModuleProseOnBlock: false,
   });
 }
 

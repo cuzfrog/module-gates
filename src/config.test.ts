@@ -24,6 +24,7 @@ describe("loadConfig", () => {
     expect(config.moduleDescriptorReadonly).toBe("frontmatter");
     expect(config.sourceRoot).toBe("src/");
     expect(config.disableSystemPrompt).toBe(false);
+    expect(config.outputModuleProseOnBlock).toBe(false);
   });
 
   it("returns defaults when settings.json has no module-gates key", () => {
@@ -155,5 +156,18 @@ describe("loadConfig", () => {
 
     const config = loadConfig("/project");
     expect(config.disableSystemPrompt).toBe(true);
+  });
+
+  it("overrides outputModuleProseOnBlock from settings", () => {
+    mockedReadFileSync.mockReturnValue(
+      JSON.stringify({
+        "module-gates": {
+          outputModuleProseOnBlock: true,
+        },
+      }),
+    );
+
+    const config = loadConfig("/project");
+    expect(config.outputModuleProseOnBlock).toBe(true);
   });
 });

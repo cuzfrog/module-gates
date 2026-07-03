@@ -7,6 +7,7 @@ export type ModuleGateConfig = {
   sourceRoot: string;
   disableModuleInterfaceImportGate: boolean;
   disableSystemPrompt: boolean;
+  outputModuleProseOnBlock: boolean;
 };
 
 const DEFAULTS: ModuleGateConfig = {
@@ -15,6 +16,7 @@ const DEFAULTS: ModuleGateConfig = {
   sourceRoot: "src/",
   disableModuleInterfaceImportGate: false,
   disableSystemPrompt: false,
+  outputModuleProseOnBlock: false,
 };
 
 export function loadConfig(cwd: string): ModuleGateConfig {

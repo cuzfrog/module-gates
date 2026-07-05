@@ -49,7 +49,7 @@ const mockedValidateVisibleEntries = vi.mocked(validateVisibleEntries);
 const defaultConfig: ModuleGateConfig = {
   moduleDescriptorFileName: "module.md",
   moduleDescriptorReadonly: "file",
-  sourceRoot: "",
+  sourceRoots: [""],
   disableModuleInterfaceImportGate: false,
       disableSystemPrompt: false,
       outputModuleProseOnBlock: false,
@@ -148,7 +148,7 @@ describe("buildModuleIndex", () => {
     const config: ModuleGateConfig = {
       moduleDescriptorFileName: "module.md",
       moduleDescriptorReadonly: "off",
-      sourceRoot: "",
+      sourceRoots: [""],
       disableModuleInterfaceImportGate: false,
       disableSystemPrompt: false,
       outputModuleProseOnBlock: false,
@@ -176,7 +176,7 @@ describe("buildModuleIndex", () => {
     const config: ModuleGateConfig = {
       moduleDescriptorFileName: "module.md",
       moduleDescriptorReadonly: "frontmatter",
-      sourceRoot: "",
+      sourceRoots: [""],
       disableModuleInterfaceImportGate: false,
       disableSystemPrompt: false,
       outputModuleProseOnBlock: false,
@@ -333,7 +333,7 @@ describe("buildModuleIndex", () => {
     const config: ModuleGateConfig = {
       moduleDescriptorFileName: "CONTEXT.md",
       moduleDescriptorReadonly: "file",
-      sourceRoot: "",
+      sourceRoots: [""],
       disableModuleInterfaceImportGate: false,
       disableSystemPrompt: false,
       outputModuleProseOnBlock: false,
@@ -363,7 +363,7 @@ describe("buildModuleIndex", () => {
     expect(index.contracts[0].modulePath).toBe("/project");
   });
 
-  it("scans only within sourceRoot", async () => {
+  it("scans only within sourceRoots", async () => {
     mockedReaddir.mockImplementation(async (dir: unknown) => {
       const d = dir as string;
       if (d === "/project/src") return [makeDirent("module.md", false)] as Dirent[];
@@ -379,7 +379,7 @@ describe("buildModuleIndex", () => {
     const config: ModuleGateConfig = {
       moduleDescriptorFileName: "module.md",
       moduleDescriptorReadonly: "file",
-      sourceRoot: "src/",
+      sourceRoots: ["src/"],
       disableModuleInterfaceImportGate: false,
       disableSystemPrompt: false,
       outputModuleProseOnBlock: false,
@@ -388,6 +388,35 @@ describe("buildModuleIndex", () => {
 
     expect(index.contracts).toHaveLength(1);
     expect(index.contracts[0].modulePath).toBe("/project/src");
+  });
+
+  it("scans multiple sourceRoots and merges contracts", async () => {
+    mockedReaddir.mockImplementation(async (dir: unknown) => {
+      const d = dir as string;
+      if (d === "/project/src") return [makeDirent("module.md", false)] as Dirent[];
+      if (d === "/project/lib") return [makeDirent("module.md", false)] as Dirent[];
+      return [] as Dirent[];
+    });
+
+    mockedReadFileSync.mockReturnValue("content");
+    mockedParseFrontmatter.mockReturnValue({
+      frontmatter: {},
+      body: "Module.",
+    });
+
+    const config: ModuleGateConfig = {
+      moduleDescriptorFileName: "module.md",
+      moduleDescriptorReadonly: "file",
+      sourceRoots: ["src/", "lib/"],
+      disableModuleInterfaceImportGate: false,
+      disableSystemPrompt: false,
+      outputModuleProseOnBlock: false,
+    };
+    const index = await buildModuleIndex(makeCtx("/project"), config);
+
+    expect(index.contracts).toHaveLength(2);
+    const paths = index.contracts.map((c) => c.modulePath).sort();
+    expect(paths).toEqual(["/project/lib", "/project/src"]);
   });
 
   it("complements child visible with parent's path-based entry", async () => {

@@ -23,7 +23,7 @@ function setConfig(over: Partial<ModuleGateConfig>): void {
   mockedLoadConfig.mockReturnValue({
     moduleDescriptorFileName: "module.md",
     moduleDescriptorReadonly: "file",
-    sourceRoot: "",
+    sourceRoots: [""],
     disableModuleInterfaceImportGate: false,
     disableSystemPrompt: false,
     outputModuleProseOnBlock: false,

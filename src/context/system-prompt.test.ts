@@ -6,7 +6,7 @@ import type { ModuleGateConfig } from "../config.ts";
 const baseConfig: ModuleGateConfig = {
   moduleDescriptorFileName: "module.md",
   moduleDescriptorReadonly: "file",
-  sourceRoot: "src/",
+  sourceRoots: ["src/"],
   disableModuleInterfaceImportGate: false,
   disableSystemPrompt: false,
   outputModuleProseOnBlock: false,

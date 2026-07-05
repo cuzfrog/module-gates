@@ -25,9 +25,9 @@ export function runGates(
 
   const before = beforeOverride ?? readFileSafe(absPath);
   const after = applyEdits(before, edits);
-  const srcRoot = path.resolve(cwd, config.sourceRoot);
+  const srcRoots = config.sourceRoots.map((r) => path.resolve(cwd, r));
 
-  if (!isWithinSourceRoot(absPath, srcRoot)) return undefined;
+  if (!isWithinSourceRoot(absPath, srcRoots)) return undefined;
 
   const descriptorResult = checkDescriptorFileReadonly(absPath, before, after, config);
   if (descriptorResult) return descriptorResult;
@@ -47,7 +47,7 @@ export function runGates(
     return { block: true, reason: formatDenial(filePath, exportResult.reason, absPath, index, cwd, config.outputModuleProseOnBlock) };
   }
 
-  const importResult = checkModuleInterfaceImports(filePath, after, index, cwd, config.disableModuleInterfaceImportGate, config.sourceRoot);
+  const importResult = checkModuleInterfaceImports(filePath, after, index, cwd, config.disableModuleInterfaceImportGate, config.sourceRoots);
   if (importResult.blocked) {
     return { block: true, reason: formatDenial(filePath, importResult.reason, absPath, index, cwd, config.outputModuleProseOnBlock) };
   }

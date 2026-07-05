@@ -10,7 +10,7 @@ vi.mock("../../src/config.ts", () => ({
   loadConfig: () => ({
     moduleDescriptorFileName: "module.md",
     moduleDescriptorReadonly: "file",
-    sourceRoot: "",
+    sourceRoots: [""],
     disableModuleInterfaceImportGate: false,
     disableSystemPrompt: false,
     outputModuleProseOnBlock: false,

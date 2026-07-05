@@ -24,7 +24,7 @@ function cfg(over: Partial<ModuleGateConfig> = {}): ModuleGateConfig {
   return {
     moduleDescriptorFileName: "module.md",
     moduleDescriptorReadonly: "file",
-    sourceRoot: "",
+    sourceRoots: [""],
     disableModuleInterfaceImportGate: false,
     disableSystemPrompt: false,
     outputModuleProseOnBlock: false,
@@ -288,7 +288,7 @@ describe("runGates descriptor protection (independent of readonly list)", () => 
       [{ oldText: "Prose.", newText: "Changed prose." }],
       tmpDir,
       index,
-      cfg({ moduleDescriptorFileName: "MODULE.md", moduleDescriptorReadonly: "file", sourceRoot: "src/" }),
+      cfg({ moduleDescriptorFileName: "MODULE.md", moduleDescriptorReadonly: "file", sourceRoots: ["src/"] }),
     );
     expect(result?.block).toBe(true);
     expect(result?.reason).toContain("Readonly rule");
@@ -311,7 +311,7 @@ describe("runGates descriptor protection (independent of readonly list)", () => 
       [{ oldText: "Prose.", newText: "Changed." }],
       tmpDir,
       index,
-      cfg({ sourceRoot: "src/" }),
+      cfg({ sourceRoots: ["src/"] }),
     );
     expect(result?.block).toBe(true);
   });

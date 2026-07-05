@@ -22,7 +22,7 @@ describe("loadConfig", () => {
     const config = loadConfig("/project");
     expect(config.moduleDescriptorFileName).toBe("module.md");
     expect(config.moduleDescriptorReadonly).toBe("frontmatter");
-    expect(config.sourceRoot).toBe("src/");
+    expect(config.sourceRoots).toEqual(["src/"]);
     expect(config.disableSystemPrompt).toBe(false);
     expect(config.outputModuleProseOnBlock).toBe(false);
   });
@@ -35,7 +35,7 @@ describe("loadConfig", () => {
     const config = loadConfig("/project");
     expect(config.moduleDescriptorFileName).toBe("module.md");
     expect(config.moduleDescriptorReadonly).toBe("frontmatter");
-    expect(config.sourceRoot).toBe("src/");
+    expect(config.sourceRoots).toEqual(["src/"]);
   });
 
   it("returns defaults when settings.json has invalid JSON", () => {
@@ -44,7 +44,7 @@ describe("loadConfig", () => {
     const config = loadConfig("/project");
     expect(config.moduleDescriptorFileName).toBe("module.md");
     expect(config.moduleDescriptorReadonly).toBe("frontmatter");
-    expect(config.sourceRoot).toBe("src/");
+    expect(config.sourceRoots).toEqual(["src/"]);
   });
 
   it("overrides defaults with module-gates values", () => {
@@ -53,7 +53,7 @@ describe("loadConfig", () => {
         "module-gates": {
           moduleDescriptorFileName: "CONTEXT.md",
           moduleDescriptorReadonly: "off",
-          sourceRoot: "lib/",
+          sourceRoots: ["lib/"],
         },
       }),
     );
@@ -61,7 +61,33 @@ describe("loadConfig", () => {
     const config = loadConfig("/project");
     expect(config.moduleDescriptorFileName).toBe("CONTEXT.md");
     expect(config.moduleDescriptorReadonly).toBe("off");
-    expect(config.sourceRoot).toBe("lib/");
+    expect(config.sourceRoots).toEqual(["lib/"]);
+  });
+
+  it("accepts multiple roots in sourceRoots array", () => {
+    mockedReadFileSync.mockReturnValue(
+      JSON.stringify({
+        "module-gates": {
+          sourceRoots: ["lib/", "packages/", "src/"],
+        },
+      }),
+    );
+
+    const config = loadConfig("/project");
+    expect(config.sourceRoots).toEqual(["lib/", "packages/", "src/"]);
+  });
+
+  it("accepts legacy singular sourceRoot as a string", () => {
+    mockedReadFileSync.mockReturnValue(
+      JSON.stringify({
+        "module-gates": {
+          sourceRoot: "lib/",
+        },
+      }),
+    );
+
+    const config = loadConfig("/project");
+    expect(config.sourceRoots).toEqual(["lib/"]);
   });
 
   it("overrides only provided keys in module-gates", () => {
@@ -76,7 +102,7 @@ describe("loadConfig", () => {
     const config = loadConfig("/project");
     expect(config.moduleDescriptorFileName).toBe("CONTEXT.md");
     expect(config.moduleDescriptorReadonly).toBe("frontmatter");
-    expect(config.sourceRoot).toBe("src/");
+    expect(config.sourceRoots).toEqual(["src/"]);
   });
 
   it("accepts frontmatter mode", () => {
@@ -134,7 +160,7 @@ describe("loadConfig", () => {
         "module-gate": {
           moduleDescriptorFileName: "MODULE.md",
           moduleDescriptorReadonly: "file",
-          sourceRoot: "src/",
+          sourceRoots: ["src/"],
         },
       }),
     );
@@ -142,7 +168,7 @@ describe("loadConfig", () => {
     const config = loadConfig("/project");
     expect(config.moduleDescriptorFileName).toBe("module.md");
     expect(config.moduleDescriptorReadonly).toBe("frontmatter");
-    expect(config.sourceRoot).toBe("src/");
+    expect(config.sourceRoots).toEqual(["src/"]);
   });
 
   it("overrides disableSystemPrompt from settings", () => {

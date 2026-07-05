@@ -23,7 +23,7 @@ function setReadonlyMode(mode: ModuleGateConfig["moduleDescriptorReadonly"]): vo
   mockedLoadConfig.mockReturnValue({
     moduleDescriptorFileName: "module.md",
     moduleDescriptorReadonly: mode,
-    sourceRoot: "",
+    sourceRoots: [""],
     disableModuleInterfaceImportGate: false,
     disableSystemPrompt: false,
     outputModuleProseOnBlock: false,

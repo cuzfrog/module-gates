@@ -9,7 +9,7 @@ import {
 } from "./helpers.ts";
 
 vi.mock("../../src/config.ts", () => ({
-  loadConfig: () => ({ moduleDescriptorFileName: "module.md", moduleDescriptorReadonly: "frontmatter", sourceRoot: "" }),
+  loadConfig: () => ({ moduleDescriptorFileName: "module.md", moduleDescriptorReadonly: "frontmatter", sourceRoots: [""] }),
 }));
 
 import mod from "../../src/index.ts";

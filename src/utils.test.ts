@@ -116,31 +116,44 @@ describe("applyEdits", () => {
 
 describe("isWithinSourceRoot", () => {
   it("returns true for file inside sourceRoot", () => {
-    expect(isWithinSourceRoot("/project/src/app/file.ts", "/project/src")).toBe(true);
+    expect(isWithinSourceRoot("/project/src/app/file.ts", ["/project/src"])).toBe(true);
   });
 
   it("returns true for file exactly at sourceRoot", () => {
-    expect(isWithinSourceRoot("/project/src", "/project/src")).toBe(true);
+    expect(isWithinSourceRoot("/project/src", ["/project/src"])).toBe(true);
   });
 
   it("returns false for file outside sourceRoot", () => {
-    expect(isWithinSourceRoot("/project/lib/app.ts", "/project/src")).toBe(false);
+    expect(isWithinSourceRoot("/project/lib/app.ts", ["/project/src"])).toBe(false);
   });
 
   it("returns false for similarly-named sibling directory", () => {
-    expect(isWithinSourceRoot("/project/src-other/file.ts", "/project/src")).toBe(false);
+    expect(isWithinSourceRoot("/project/src-other/file.ts", ["/project/src"])).toBe(false);
   });
 
   it("returns true for file at project root when sourceRoot is empty string", () => {
-    expect(isWithinSourceRoot("/project/app.ts", "/project")).toBe(true);
+    expect(isWithinSourceRoot("/project/app.ts", ["/project"])).toBe(true);
   });
 
   it("returns true for file exactly at filesystem root", () => {
-    expect(isWithinSourceRoot("/", "/")).toBe(true);
+    expect(isWithinSourceRoot("/", ["/"])).toBe(true);
   });
 
   it("returns false for file in root when resolvedRoot is a child path", () => {
-    expect(isWithinSourceRoot("/project", "/project/src")).toBe(false);
+    expect(isWithinSourceRoot("/project", ["/project/src"])).toBe(false);
+  });
+
+  it("returns true when file is inside any of multiple roots", () => {
+    expect(isWithinSourceRoot("/project/lib/app.ts", ["/project/src", "/project/lib"])).toBe(true);
+    expect(isWithinSourceRoot("/project/src/app.ts", ["/project/src", "/project/lib"])).toBe(true);
+  });
+
+  it("returns false when file is outside all of multiple roots", () => {
+    expect(isWithinSourceRoot("/project/other/app.ts", ["/project/src", "/project/lib"])).toBe(false);
+  });
+
+  it("returns false for empty roots array", () => {
+    expect(isWithinSourceRoot("/project/src/app.ts", [])).toBe(false);
   });
 });
 

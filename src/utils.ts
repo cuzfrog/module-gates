@@ -35,8 +35,13 @@ export function applyEdits(content: string, edits: { oldText: string; newText: s
   return result;
 }
 
-export function isWithinSourceRoot(absPath: string, resolvedRoot: string): boolean {
-  return absPath.startsWith(resolvedRoot + path.sep) || absPath === resolvedRoot;
+export function isWithinSourceRoot(absPath: string, resolvedRoots: string[]): boolean {
+  for (const resolvedRoot of resolvedRoots) {
+    if (absPath.startsWith(resolvedRoot + path.sep) || absPath === resolvedRoot) {
+      return true;
+    }
+  }
+  return false;
 }
 
 export function getAncestorContracts(

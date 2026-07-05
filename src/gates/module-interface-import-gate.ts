@@ -13,13 +13,13 @@ export function checkModuleInterfaceImports(
   index: ModuleIndex,
   cwd: string,
   disabled: boolean,
-  sourceRoot: string,
+  sourceRoots: string[],
 ): ImportCheckResult {
   if (disabled) return { blocked: false };
 
   const absFile = path.resolve(cwd, filePath);
   const fileDir = path.dirname(absFile);
-  const srcRoot = path.resolve(cwd, sourceRoot);
+  const srcRoots = sourceRoots.map((r) => path.resolve(cwd, r));
   const violations: string[] = [];
 
   for (const importPath of extractJsImportPaths(afterContent)) {
@@ -32,7 +32,7 @@ export function checkModuleInterfaceImports(
   }
 
   for (const modulePath of extractRustUsePaths(afterContent)) {
-    const resolved = resolveRustCratePath(modulePath, srcRoot);
+    const resolved = resolveRustCratePath(modulePath, srcRoots);
     if (!resolved) continue;
     if (isInNodeModules(resolved, cwd)) continue;
 
@@ -115,15 +115,18 @@ function resolveRelativeImport(importPath: string, fileDir: string): string | un
   return undefined;
 }
 
-function resolveRustCratePath(modulePath: string, srcRoot: string): string | undefined {
+function resolveRustCratePath(modulePath: string, srcRoots: string[]): string | undefined {
   const segments = modulePath.split("/");
-  const base = path.resolve(srcRoot, ...segments);
 
-  const asFile = base + ".rs";
-  if (fs.existsSync(asFile)) return asFile;
+  for (const srcRoot of srcRoots) {
+    const base = path.resolve(srcRoot, ...segments);
 
-  const asMod = path.join(base, "mod.rs");
-  if (fs.existsSync(asMod)) return asMod;
+    const asFile = base + ".rs";
+    if (fs.existsSync(asFile)) return asFile;
+
+    const asMod = path.join(base, "mod.rs");
+    if (fs.existsSync(asMod)) return asMod;
+  }
 
   return undefined;
 }

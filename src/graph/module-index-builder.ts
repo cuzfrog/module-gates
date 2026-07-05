@@ -18,9 +18,12 @@ export async function buildModuleIndex(
   config: ModuleGateConfig,
 ): Promise<ModuleIndex> {
   const notify = (msg: string) => ctx.ui.notify(msg, "info");
-  const scanRoot = path.resolve(ctx.cwd, config.sourceRoot);
+  const scanRoots = resolveScanRoots(ctx.cwd, config.sourceRoots);
 
-  const moduleFiles = await findModuleFiles(scanRoot, config.moduleDescriptorFileName);
+  const moduleFilesList = await Promise.all(
+    scanRoots.map((root) => findModuleFiles(root, config.moduleDescriptorFileName)),
+  );
+  const moduleFiles = moduleFilesList.flat();
   const contracts = buildContracts(moduleFiles, notify);
   applyComplementPass(contracts);
   const dirToModule = await buildDirToModuleMap(contracts);
@@ -29,6 +32,11 @@ export async function buildModuleIndex(
   await validateVisibleEntries(index, ctx.cwd, ctx.ui.notify, config.moduleDescriptorFileName);
 
   return index;
+}
+
+function resolveScanRoots(cwd: string, sourceRoots: string[]): string[] {
+  if (sourceRoots.length === 0) return [path.resolve(cwd)];
+  return sourceRoots.map((r) => path.resolve(cwd, r));
 }
 
 function buildContracts(

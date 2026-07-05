@@ -39,7 +39,7 @@ function materializeProject(): void {
     JSON.stringify({
       "module-gates": {
         moduleDescriptorFileName: "module.md",
-        sourceRoot: "src/",
+        sourceRoots: ["src/"],
       },
     }) + "\n",
   );

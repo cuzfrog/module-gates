@@ -55,7 +55,7 @@ describe("checkModuleInterfaceImports", () => {
       index,
       tmpDir,
       false,
-      "src/",
+      ["src/"],
     );
 
     expect(result.blocked).toBe(true);
@@ -83,7 +83,7 @@ describe("checkModuleInterfaceImports", () => {
       index,
       tmpDir,
       false,
-      "src/",
+      ["src/"],
     );
 
     expect(result.blocked).toBe(false);
@@ -105,7 +105,7 @@ describe("checkModuleInterfaceImports", () => {
       index,
       tmpDir,
       false,
-      "src/",
+      ["src/"],
     );
 
     expect(result.blocked).toBe(false);
@@ -128,7 +128,7 @@ describe("checkModuleInterfaceImports", () => {
       index,
       tmpDir,
       false,
-      "src/",
+      ["src/"],
     );
 
     expect(result.blocked).toBe(false);
@@ -153,7 +153,7 @@ describe("checkModuleInterfaceImports", () => {
       index,
       tmpDir,
       false,
-      "src/",
+      ["src/"],
     );
 
     expect(result.blocked).toBe(true);
@@ -176,7 +176,7 @@ describe("checkModuleInterfaceImports", () => {
       index,
       tmpDir,
       false,
-      "src/",
+      ["src/"],
     );
 
     expect(result.blocked).toBe(false);
@@ -201,7 +201,7 @@ describe("checkModuleInterfaceImports", () => {
       index,
       tmpDir,
       true,
-      "src/",
+      ["src/"],
     );
 
     expect(result.blocked).toBe(false);
@@ -226,7 +226,7 @@ describe("checkModuleInterfaceImports", () => {
       index,
       tmpDir,
       false,
-      "src/",
+      ["src/"],
     );
 
     expect(result.blocked).toBe(true);
@@ -254,7 +254,7 @@ describe("checkModuleInterfaceImports", () => {
       index,
       tmpDir,
       false,
-      "src/",
+      ["src/"],
     );
 
     expect(result.blocked).toBe(false);
@@ -279,7 +279,7 @@ describe("checkModuleInterfaceImports", () => {
       index,
       tmpDir,
       false,
-      "src/",
+      ["src/"],
     );
 
     expect(result.blocked).toBe(false);
@@ -304,7 +304,7 @@ describe("checkModuleInterfaceImports", () => {
       index,
       tmpDir,
       false,
-      "src/",
+      ["src/"],
     );
 
     expect(result.blocked).toBe(true);
@@ -326,7 +326,7 @@ describe("checkModuleInterfaceImports", () => {
       index,
       tmpDir,
       false,
-      "src/",
+      ["src/"],
     );
 
     expect(result.blocked).toBe(false);
@@ -352,7 +352,7 @@ describe("checkModuleInterfaceImports", () => {
       index,
       tmpDir,
       false,
-      "src/",
+      ["src/"],
     );
 
     expect(result.blocked).toBe(true);
@@ -381,7 +381,7 @@ describe("checkModuleInterfaceImports", () => {
       index,
       tmpDir,
       false,
-      "src/",
+      ["src/"],
     );
 
     expect(result.blocked).toBe(true);
@@ -410,7 +410,7 @@ describe("checkModuleInterfaceImports", () => {
       index,
       tmpDir,
       false,
-      "src/",
+      ["src/"],
     );
 
     expect(result.blocked).toBe(true);
@@ -436,7 +436,7 @@ describe("checkModuleInterfaceImports", () => {
       index,
       tmpDir,
       false,
-      "src/",
+      ["src/"],
     );
 
     expect(result.blocked).toBe(false);
@@ -460,7 +460,7 @@ describe("checkModuleInterfaceImports", () => {
       index,
       tmpDir,
       false,
-      "src/",
+      ["src/"],
     );
 
     expect(result.blocked).toBe(false);
@@ -485,7 +485,7 @@ describe("checkModuleInterfaceImports", () => {
       index,
       tmpDir,
       false,
-      "src/",
+      ["src/"],
     );
 
     expect(result.blocked).toBe(false);
@@ -510,7 +510,7 @@ describe("checkModuleInterfaceImports", () => {
       index,
       tmpDir,
       false,
-      "src/",
+      ["src/"],
     );
 
     expect(result.blocked).toBe(true);
@@ -538,7 +538,7 @@ describe("checkModuleInterfaceImports", () => {
       index,
       tmpDir,
       false,
-      "src/",
+      ["src/"],
     );
 
     expect(result.blocked).toBe(true);

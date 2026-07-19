@@ -27,7 +27,7 @@ src/
     system-prompt.ts              — Builds system prompt hint from module index
   gates/
     readonly-gate.ts              — Blocks writes to readonly files in a module
-    sealed-gate.ts                — Blocks new exports on sealed files in a module
+    no-new-exports-gate.ts         — Blocks new exports on no-new-exports files in a module
     export-gate.ts                — Blocks changes that break a module's public API
     checkers/
       index.ts                    — Auto-registers all checkers

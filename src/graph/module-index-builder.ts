@@ -70,7 +70,7 @@ function buildContracts(
           ? frontmatter.visible.map(parseVisibleEntry)
           : null,
       readonly: frontmatter.readonly ?? [],
-      sealed: frontmatter.sealed ?? [],
+      noNewExports: frontmatter["no-new-exports"] ?? [],
       prose: body.trim(),
     });
   }

@@ -14,7 +14,7 @@ vi.mock("../../src/config.ts", () => ({
 
 import mod from "../../src/index.ts";
 
-describe("sealed gating", () => {
+describe("no-new-exports gating", () => {
   let mock: MockExtensionAPI;
 
   beforeEach(() => {
@@ -22,13 +22,13 @@ describe("sealed gating", () => {
     mod(mock);
   });
 
-  it("blocks write that adds new export to sealed file", async () => {
-    const cwd = path.join(FIXTURES, "sealed-test");
+  it("blocks write that adds new export to no-new-exports file", async () => {
+    const cwd = path.join(FIXTURES, "no-new-exports-test");
     await startSession(mock, cwd);
 
     const result = await doWrite(
       mock,
-      "sealed.ts",
+      "no-new-exports.ts",
       "export function existingFn() { return 1; }\nexport function newFn() { return 2; }",
       cwd,
     );
@@ -36,26 +36,26 @@ describe("sealed gating", () => {
     expect((result as any).block).toBe(true);
 
     const reason = (result as any).reason!;
-    expect(reason).toContain("Sealed rule");
+    expect(reason).toContain("No-new-exports rule");
     expect(reason).toContain("newFn");
     expect(reason).toContain("module.md");
   });
 
-  it("allows write that modifies existing exports without adding new ones on sealed file", async () => {
-    const cwd = path.join(FIXTURES, "sealed-test");
+  it("allows write that modifies existing exports without adding new ones on no-new-exports file", async () => {
+    const cwd = path.join(FIXTURES, "no-new-exports-test");
     await startSession(mock, cwd);
 
     const result = await doWrite(
       mock,
-      "sealed.ts",
+      "no-new-exports.ts",
       "export function existingFn() { return 2; }",
       cwd,
     );
     expect(result?.block).toBeFalsy();
   });
 
-  it("allows write to non-sealed file in same module", async () => {
-    const cwd = path.join(FIXTURES, "sealed-test");
+  it("allows write to non-no-new-exports file in same module", async () => {
+    const cwd = path.join(FIXTURES, "no-new-exports-test");
     await startSession(mock, cwd);
 
     const result = await doWrite(
@@ -67,13 +67,13 @@ describe("sealed gating", () => {
     expect(result?.block).toBeFalsy();
   });
 
-  it("blocks edit that adds new export to sealed file", async () => {
-    const cwd = path.join(FIXTURES, "sealed-test");
+  it("blocks edit that adds new export to no-new-exports file", async () => {
+    const cwd = path.join(FIXTURES, "no-new-exports-test");
     await startSession(mock, cwd);
 
     const result = await doEdit(
       mock,
-      "sealed.ts",
+      "no-new-exports.ts",
       [
         {
           oldText: "export function existingFn() { return 1; }",
@@ -87,17 +87,17 @@ describe("sealed gating", () => {
     expect((result as any).block).toBe(true);
 
     const reason = (result as any).reason!;
-    expect(reason).toContain("Sealed rule");
+    expect(reason).toContain("No-new-exports rule");
     expect(reason).toContain("newFn");
   });
 
-  it("blocks write that adds re-export to sealed file", async () => {
-    const cwd = path.join(FIXTURES, "sealed-test");
+  it("blocks write that adds re-export to no-new-exports file", async () => {
+    const cwd = path.join(FIXTURES, "no-new-exports-test");
     await startSession(mock, cwd);
 
     const result = await doWrite(
       mock,
-      "sealed.ts",
+      "no-new-exports.ts",
       'export function existingFn() { return 1; }\nexport { buildSystemPromptHint } from "./system-prompt.ts";',
       cwd,
     );
@@ -105,17 +105,17 @@ describe("sealed gating", () => {
     expect((result as any).block).toBe(true);
 
     const reason = (result as any).reason!;
-    expect(reason).toContain("Sealed rule");
+    expect(reason).toContain("No-new-exports rule");
     expect(reason).toContain("buildSystemPromptHint");
   });
 
-  it("allows edit that modifies body without adding exports on sealed file", async () => {
-    const cwd = path.join(FIXTURES, "sealed-test");
+  it("allows edit that modifies body without adding exports on no-new-exports file", async () => {
+    const cwd = path.join(FIXTURES, "no-new-exports-test");
     await startSession(mock, cwd);
 
     const result = await doEdit(
       mock,
-      "sealed.ts",
+      "no-new-exports.ts",
       [
         {
           oldText: "return 1;",
@@ -127,13 +127,13 @@ describe("sealed gating", () => {
     expect(result?.block).toBeFalsy();
   });
 
-  it("blocks write that adds type-only re-export to sealed file", async () => {
-    const cwd = path.join(FIXTURES, "sealed-test");
+  it("blocks write that adds type-only re-export to no-new-exports file", async () => {
+    const cwd = path.join(FIXTURES, "no-new-exports-test");
     await startSession(mock, cwd);
 
     const result = await doWrite(
       mock,
-      "sealed.ts",
+      "no-new-exports.ts",
       'export function existingFn() { return 1; }\nexport type { SomeType } from "./system-prompt.ts";',
       cwd,
     );
@@ -141,17 +141,17 @@ describe("sealed gating", () => {
     expect((result as any).block).toBe(true);
 
     const reason = (result as any).reason!;
-    expect(reason).toContain("Sealed rule");
+    expect(reason).toContain("No-new-exports rule");
     expect(reason).toContain("SomeType");
   });
 
-  it("blocks write that adds star re-export to sealed file", async () => {
-    const cwd = path.join(FIXTURES, "sealed-test");
+  it("blocks write that adds star re-export to no-new-exports file", async () => {
+    const cwd = path.join(FIXTURES, "no-new-exports-test");
     await startSession(mock, cwd);
 
     const result = await doWrite(
       mock,
-      "sealed.ts",
+      "no-new-exports.ts",
       'export function existingFn() { return 1; }\nexport * from "./system-prompt.ts";',
       cwd,
     );
@@ -159,16 +159,16 @@ describe("sealed gating", () => {
     expect((result as any).block).toBe(true);
 
     const reason = (result as any).reason!;
-    expect(reason).toContain("Sealed rule");
+    expect(reason).toContain("No-new-exports rule");
   });
 
-  it("blocks write that adds default identifier export to sealed file", async () => {
-    const cwd = path.join(FIXTURES, "sealed-test");
+  it("blocks write that adds default identifier export to no-new-exports file", async () => {
+    const cwd = path.join(FIXTURES, "no-new-exports-test");
     await startSession(mock, cwd);
 
     const result = await doWrite(
       mock,
-      "sealed.ts",
+      "no-new-exports.ts",
       'const SomeName = "hello";\nexport function existingFn() { return 1; }\nexport default SomeName;',
       cwd,
     );
@@ -176,7 +176,7 @@ describe("sealed gating", () => {
     expect((result as any).block).toBe(true);
 
     const reason = (result as any).reason!;
-    expect(reason).toContain("Sealed rule");
+    expect(reason).toContain("No-new-exports rule");
     expect(reason).toContain("SomeName");
   });
 });

@@ -1,5 +1,5 @@
 import { describe, it, expect } from "vitest";
-import { checkSealed } from "./sealed-gate.ts";
+import { checkNoNewExports } from "./no-new-exports-gate.ts";
 import type { ModuleIndex, ModuleContract } from "../types.ts";
 import "./checkers/typescript.ts";
 
@@ -7,66 +7,66 @@ function makeIndex(contracts: ModuleContract[]): ModuleIndex {
   return { contracts, dirToModule: new Map() };
 }
 
-describe("checkSealed", () => {
+describe("checkNoNewExports", () => {
   const cwd = "/project";
 
-  it("blocks when new export is added to sealed file", () => {
+  it("blocks when new export is added to no-new-exports file", () => {
     const index = makeIndex([
       {
         modulePath: "/project/src",
         descriptorFileName: "module.md",
         visible: null,
         readonly: ["module.md"],
-        sealed: ["sealed.ts"],
+        noNewExports: ["no-new-exports.ts"],
         prose: "",
       },
     ]);
 
     const before = "export function existingFn() {}";
     const after = "export function existingFn() {}\nexport function newFn() {}";
-    const result = checkSealed("src/sealed.ts", before, after, index, cwd);
+    const result = checkNoNewExports("src/no-new-exports.ts", before, after, index, cwd);
 
     expect(result.blocked).toBe(true);
     if (result.blocked) {
-      expect(result.reason).toContain("Sealed rule");
+      expect(result.reason).toContain("No-new-exports rule");
       expect(result.reason).toContain("newFn");
     }
   });
 
-  it("allows edit without new exports on sealed file", () => {
+  it("allows edit without new exports on no-new-exports file", () => {
     const index = makeIndex([
       {
         modulePath: "/project/src",
         descriptorFileName: "module.md",
         visible: null,
         readonly: ["module.md"],
-        sealed: ["sealed.ts"],
+        noNewExports: ["no-new-exports.ts"],
         prose: "",
       },
     ]);
 
     const before = "export function existingFn() { return 1; }";
     const after = "export function existingFn() { return 2; }";
-    const result = checkSealed("src/sealed.ts", before, after, index, cwd);
+    const result = checkNoNewExports("src/no-new-exports.ts", before, after, index, cwd);
 
     expect(result.blocked).toBe(false);
   });
 
-  it("allows file not in sealed list", () => {
+  it("allows file not in no-new-exports list", () => {
     const index = makeIndex([
       {
         modulePath: "/project/src",
         descriptorFileName: "module.md",
         visible: null,
         readonly: ["module.md"],
-        sealed: ["sealed.ts"],
+        noNewExports: ["no-new-exports.ts"],
         prose: "",
       },
     ]);
 
     const before = "";
     const after = "export function anything() {}";
-    const result = checkSealed("src/app.ts", before, after, index, cwd);
+    const result = checkNoNewExports("src/app.ts", before, after, index, cwd);
 
     expect(result.blocked).toBe(false);
   });
@@ -78,12 +78,12 @@ describe("checkSealed", () => {
         descriptorFileName: "module.md",
         visible: null,
         readonly: ["module.md"],
-        sealed: ["data.json"],
+        noNewExports: ["data.json"],
         prose: "",
       },
     ]);
 
-    const result = checkSealed(
+    const result = checkNoNewExports(
       "src/data.json",
       "{}",
       '{"new": true}',
@@ -95,14 +95,14 @@ describe("checkSealed", () => {
     expect(result.blocked).toBe(false);
   });
 
-  it("checks ancestor module sealed patterns", () => {
+  it("checks ancestor module no-new-exports patterns", () => {
     const index = makeIndex([
       {
         modulePath: "/project",
         descriptorFileName: "module.md",
         visible: null,
         readonly: ["module.md"],
-        sealed: ["src/sealed.ts"],
+        noNewExports: ["src/no-new-exports.ts"],
         prose: "",
       },
       {
@@ -110,14 +110,14 @@ describe("checkSealed", () => {
         descriptorFileName: "module.md",
         visible: null,
         readonly: ["module.md"],
-        sealed: [],
+        noNewExports: [],
         prose: "",
       },
     ]);
 
     const before = "export function existingFn() {}";
     const after = "export function existingFn() {}\nexport function newFn() {}";
-    const result = checkSealed("src/sealed.ts", before, after, index, cwd);
+    const result = checkNoNewExports("src/no-new-exports.ts", before, after, index, cwd);
 
     expect(result.blocked).toBe(true);
     if (result.blocked) {
@@ -132,14 +132,14 @@ describe("checkSealed", () => {
         descriptorFileName: "module.md",
         visible: null,
         readonly: ["module.md"],
-        sealed: ["vendor"],
+        noNewExports: ["vendor"],
         prose: "",
       },
     ]);
 
     const before = "";
     const after = "export function newFn() {}";
-    const result = checkSealed("src/vendor/lib.ts", before, after, index, cwd);
+    const result = checkNoNewExports("src/vendor/lib.ts", before, after, index, cwd);
 
     expect(result.blocked).toBe(true);
   });
@@ -151,14 +151,14 @@ describe("checkSealed", () => {
         descriptorFileName: "module.md",
         visible: null,
         readonly: ["module.md"],
-        sealed: ["generated*"],
+        noNewExports: ["generated*"],
         prose: "",
       },
     ]);
 
     const before = "";
     const after = "export function newFn() {}";
-    const result = checkSealed("src/generated-types.ts", before, after, index, cwd);
+    const result = checkNoNewExports("src/generated-types.ts", before, after, index, cwd);
 
     expect(result.blocked).toBe(true);
   });
@@ -168,26 +168,26 @@ describe("checkSealed", () => {
 
     const before = "";
     const after = "export function anything() {}";
-    const result = checkSealed("src/app.ts", before, after, index, cwd);
+    const result = checkNoNewExports("src/app.ts", before, after, index, cwd);
 
     expect(result.blocked).toBe(false);
   });
 
-  it("allows when no sealed patterns match", () => {
+  it("allows when no no-new-exports patterns match", () => {
     const index = makeIndex([
       {
         modulePath: "/project/src",
         descriptorFileName: "module.md",
         visible: null,
         readonly: ["module.md"],
-        sealed: [],
+        noNewExports: [],
         prose: "",
       },
     ]);
 
     const before = "";
     const after = "export function anything() {}";
-    const result = checkSealed("src/app.ts", before, after, index, cwd);
+    const result = checkNoNewExports("src/app.ts", before, after, index, cwd);
 
     expect(result.blocked).toBe(false);
   });
@@ -199,7 +199,7 @@ describe("checkSealed", () => {
         descriptorFileName: "module.md",
         visible: null,
         readonly: ["module.md"],
-        sealed: ["sealed.ts"],
+        noNewExports: ["no-new-exports.ts"],
         prose: "",
       },
     ]);
@@ -207,7 +207,7 @@ describe("checkSealed", () => {
     const before = "export function existingFn() {}";
     const after =
       "export function existingFn() {}\nexport function newA() {}\nexport type newB = string;";
-    const result = checkSealed("src/sealed.ts", before, after, index, cwd);
+    const result = checkNoNewExports("src/no-new-exports.ts", before, after, index, cwd);
 
     expect(result.blocked).toBe(true);
     if (result.blocked) {
@@ -223,7 +223,7 @@ describe("checkSealed", () => {
         descriptorFileName: "module.md",
         visible: null,
         readonly: ["module.md"],
-        sealed: [],
+        noNewExports: [],
         prose: "",
       },
       {
@@ -231,14 +231,14 @@ describe("checkSealed", () => {
         descriptorFileName: "module.md",
         visible: null,
         readonly: ["module.md"],
-        sealed: ["sealed.ts"],
+        noNewExports: ["no-new-exports.ts"],
         prose: "",
       },
     ]);
 
     const before = "";
     const after = "export function newFn() {}";
-    const result = checkSealed("src/sealed.ts", before, after, index, cwd);
+    const result = checkNoNewExports("src/no-new-exports.ts", before, after, index, cwd);
 
     expect(result.blocked).toBe(true);
     if (result.blocked) {

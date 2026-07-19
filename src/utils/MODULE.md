@@ -1,4 +1,4 @@
 ---
-sealed:
+no-new-exports:
   - frontmatter.ts
 ---

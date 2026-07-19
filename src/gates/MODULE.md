@@ -1,5 +1,5 @@
 ---
-sealed:
+no-new-exports:
   - export-gate.ts
   - export-gate.test.ts
   - index.ts
@@ -9,6 +9,6 @@ sealed:
   - readonly-gate.test.ts
   - run-gates.ts
   - run-gates.test.ts
-  - sealed-gate.ts
-  - sealed-gate.test.ts
+  - no-new-exports-gate.ts
+  - no-new-exports-gate.test.ts
 ---

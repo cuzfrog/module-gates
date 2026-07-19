@@ -66,7 +66,7 @@ describe("validateVisibleEntries", () => {
         descriptorFileName: "module.md",
         visible: [{ name: "GhostType" }],
         readonly: ["module.md"],
-        sealed: [],
+        noNewExports: [],
         prose: "",
       },
     ]);
@@ -96,7 +96,7 @@ describe("validateVisibleEntries", () => {
         descriptorFileName: "module.md",
         visible: [{ name: "greet" }],
         readonly: ["module.md"],
-        sealed: [],
+        noNewExports: [],
         prose: "",
       },
     ]);
@@ -123,7 +123,7 @@ describe("validateVisibleEntries", () => {
         descriptorFileName: "module.md",
         visible: null,
         readonly: ["module.md"],
-        sealed: [],
+        noNewExports: [],
         prose: "",
       },
     ]);
@@ -139,7 +139,7 @@ describe("validateVisibleEntries", () => {
         descriptorFileName: "module.md",
         visible: [{ name: "anything" }],
         readonly: ["module.md"],
-        sealed: [],
+        noNewExports: [],
         prose: "",
       },
     ]);
@@ -162,7 +162,7 @@ describe("validateVisibleEntries", () => {
         descriptorFileName: "module.md",
         visible: [{ name: "GhostType" }],
         readonly: ["module.md"],
-        sealed: [],
+        noNewExports: [],
         prose: "",
       },
       {
@@ -170,7 +170,7 @@ describe("validateVisibleEntries", () => {
         descriptorFileName: "module.md",
         visible: [{ name: "greet" }],
         readonly: ["module.md"],
-        sealed: [],
+        noNewExports: [],
         prose: "",
       },
     ]);
@@ -219,7 +219,7 @@ describe("validateVisibleEntries", () => {
         descriptorFileName: "module.md",
         visible: [{ name: "GhostA" }, { name: "GhostB" }],
         readonly: ["module.md"],
-        sealed: [],
+        noNewExports: [],
         prose: "",
       },
     ]);

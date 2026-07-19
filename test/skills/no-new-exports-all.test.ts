@@ -3,7 +3,7 @@ import { tmpdir } from "node:os";
 import { mkdtempSync, writeFileSync, rmSync, mkdirSync, existsSync, readFileSync, readdirSync } from "node:fs";
 import { join, sep } from "node:path";
 import { execSync } from "node:child_process";
-import { SUPPORTED_EXTENSIONS } from "../../skills/module-seal-all/scripts/seal-all.mjs";
+import { SUPPORTED_EXTENSIONS } from "../../skills/module-no-new-exports-all/scripts/no-new-exports-all.mjs";
 import { getChecker } from "../../src/gates/checkers/registry.ts";
 import "../../src/gates/checkers/typescript.ts";
 import "../../src/gates/checkers/rust.ts";
@@ -17,9 +17,9 @@ const scriptPath = join(
   "..",
   "..",
   "skills",
-  "module-seal-all",
+  "module-no-new-exports-all",
   "scripts",
-  "seal-all.mjs",
+  "no-new-exports-all.mjs",
 );
 
 const checkersDir = join(import.meta.dirname, "..", "..", "src", "gates", "checkers");
@@ -57,7 +57,7 @@ function runScript(cwd: string, args: string[]): { stdout: string; stderr: strin
 }
 
 function setupFixture(): string {
-  const dir = mkdtempSync(join(tmpdir(), "module-seal-all-test-"));
+  const dir = mkdtempSync(join(tmpdir(), "module-no-new-exports-all-test-"));
   mkdirSync(join(dir, "src"), { recursive: true });
   mkdirSync(join(dir, "src", "sub"), { recursive: true });
   return dir;
@@ -67,8 +67,8 @@ function cleanupFixture(dir: string): void {
   rmSync(dir, { recursive: true, force: true });
 }
 
-describe("seal-all.mjs", () => {
-  it("adds sealed entries to existing module.md", () => {
+describe("no-new-exports-all.mjs", () => {
+  it("adds no-new-exports entries to existing module.md", () => {
     const dir = setupFixture();
 
     writeFileSync(
@@ -84,7 +84,7 @@ describe("seal-all.mjs", () => {
     expect(result.status).toBe(0);
 
     const updated = readFileSync(join(dir, "src", "module.md"), "utf-8");
-    expect(updated).toContain("sealed:");
+    expect(updated).toContain("no-new-exports:");
     expect(updated).toContain("app.ts");
     expect(updated).toContain("utils.ts");
     expect(updated).not.toContain("nested.ts");
@@ -97,12 +97,12 @@ describe("seal-all.mjs", () => {
     cleanupFixture(dir);
   });
 
-  it("preserves existing sealed entries when adding new ones", () => {
+  it("preserves existing no-new-exports entries when adding new ones", () => {
     const dir = setupFixture();
 
     writeFileSync(
       join(dir, "src", "module.md"),
-      "---\nsealed:\n  - existing.ts\n---\n\n",
+      "---\nno-new-exports:\n  - existing.ts\n---\n\n",
     );
     writeFileSync(join(dir, "src", "existing.ts"), "");
     writeFileSync(join(dir, "src", "new-file.ts"), "");
@@ -188,7 +188,7 @@ describe("seal-all.mjs", () => {
 
     writeFileSync(
       join(dir, "src", "module.md"),
-      "---\nsealed:\n  - app.ts\n---\n\n",
+      "---\nno-new-exports:\n  - app.ts\n---\n\n",
     );
     writeFileSync(join(dir, "src", "app.ts"), "");
 
@@ -212,7 +212,7 @@ describe("seal-all.mjs", () => {
     expect(result.status).toBe(0);
 
     const created = readFileSync(join(dir, "src", "MODULE.md"), "utf-8");
-    expect(created).toContain("sealed:");
+    expect(created).toContain("no-new-exports:");
     expect(created).toContain("app.ts");
     expect(created).toContain("utils.ts");
 
@@ -229,7 +229,7 @@ describe("seal-all.mjs", () => {
     expect(result.status).toBe(0);
 
     const updated = readFileSync(join(dir, "src", "module.md"), "utf-8");
-    expect(updated).toContain("sealed:");
+    expect(updated).toContain("no-new-exports:");
     expect(updated).toContain("app.ts");
     expect(updated).toContain("Just prose");
 
@@ -303,12 +303,12 @@ describe("seal-all.mjs", () => {
     cleanupFixture(dir);
   });
 
-  it("preserves existing sealed entries with unsupported extensions", () => {
+  it("preserves existing no-new-exports entries with unsupported extensions", () => {
     const dir = setupFixture();
 
     writeFileSync(
       join(dir, "src", "module.md"),
-      "---\nsealed:\n  - docs.md\n---\n\n",
+      "---\nno-new-exports:\n  - docs.md\n---\n\n",
     );
     writeFileSync(join(dir, "src", "docs.md"), "doc");
     writeFileSync(join(dir, "src", "app.ts"), "");

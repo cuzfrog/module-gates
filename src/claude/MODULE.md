@@ -1,5 +1,5 @@
 ---
-sealed:
+no-new-exports:
   - index-loader.test.ts
   - index-loader.ts
   - pre-tool-use.test.ts

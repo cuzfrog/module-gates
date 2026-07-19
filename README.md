@@ -13,7 +13,7 @@ AI coding agents produce edits with limited context knowledge (myopia) — their
 **Module contracts as guardrails.** Each directory can contain a descriptor file that declares:
 
 - `readonly` — files and directories the agent must not touch
-- `sealed` — files where no new exports are allowed (body still editable)
+- `no-new-exports` — files where no new exports are allowed (body still editable)
 - `visible` — the set of exports allowed to be added or modified in that module
 
 The extension intercepts agent `write`/`edit` operations and enforces these contracts. Violations are blocked with a clear reason.
@@ -27,7 +27,7 @@ The attempt to add 2 public helper functions is blocked, forcing the agent to re
 2. **System prompt** — Injects a hint so the agent knows to respect descriptor file conventions.
 3. **Gating** — On every write/edit, checks:
    - **Readonly gate** — is the target file locked?
-     **Sealed gate** — would the change add new exports to a file in the `sealed` list?
+     **No-new-exports gate** — would the change add new exports to a file in the `no-new-exports` list?
    - **Export gate** — would the change introduce an export not in the `visible` list?
    - **Module interface import gate** — external files can only import from the module not internal files, i.e. re-exports from `index.ts` or `mod.rs`. A child module may import from a parent module's internal files (not recommended but allowed). (Only Typescript/JavaScript and Rust are supported)
    - **Import gate** (not implemented yet) — would the change introduce an import violating visibility scope?
@@ -58,14 +58,14 @@ readonly: [mod.rs]
 Any prose for the agent to better understand the module.
 ```
 
-### Sealed constraints
+### No-new-exports constraints
 
 ```yaml
-sealed: [mod.rs]
+no-new-exports: [mod.rs]
 ```
-Sealed files cannot change their surface size: no new exports or public entries are allowed. The file body is still editable.
+No-new-exports files cannot change their surface size: no new exports or public entries are allowed. The file body is still editable.
 
-A skill [module-seal-all](skills/module-seal-all) has been included to auto-seal modules.
+A skill [module-no-new-exports-all](skills/module-no-new-exports-all) has been included to populate no-new-exports entries in modules.
 
 ### Visibility whitelist (under redesign)
 

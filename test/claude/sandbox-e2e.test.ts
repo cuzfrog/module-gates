@@ -48,7 +48,7 @@ function materializeProject(): void {
     [
       "---",
       "readonly: [locked.ts]",
-      "sealed: [sealed.ts]",
+      "no-new-exports: [no-new-exports.ts]",
       "visible: [greet]",
       "---",
       "",
@@ -57,7 +57,7 @@ function materializeProject(): void {
     ].join("\n"),
   );
   write("src/locked.ts", "export const LOCKED = 1;\n");
-  write("src/sealed.ts", "export function existingFn() { return 1; }\n");
+  write("src/no-new-exports.ts", "export function existingFn() { return 1; }\n");
   write("src/greet.ts", "export function greet(name: string) { return name; }\n");
   write("src/app.ts", "export const app = 1;\n");
 }
@@ -72,7 +72,7 @@ function runHook(stdinObj: unknown) {
 }
 
 describe("sandbox e2e: install + all three gates", () => {
-  it("installs the hook and exercises readonly, sealed, visible deny+allow", { timeout: 60_000 }, () => {
+  it("installs the hook and exercises readonly, no-new-exports, visible deny+allow", { timeout: 60_000 }, () => {
     materializeProject();
 
     const install = spawnSync(BIN, ["install-claude", "--project-dir", tmp], {
@@ -108,29 +108,29 @@ describe("sandbox e2e: install + all three gates", () => {
     });
     expect(writeOpen.status).toBe(0);
 
-    const writeSealedAddExport = runHook({
+    const writeNoNewExportsAddExport = runHook({
       hook_event_name: "PreToolUse",
       tool_name: "Write",
       tool_input: {
-        file_path: "src/sealed.ts",
+        file_path: "src/no-new-exports.ts",
         content: "export function existingFn() { return 1; }\nexport function leaky() { return 2; }\n",
       },
       cwd: tmp,
     });
-    expect(writeSealedAddExport.status).toBe(2);
-    expect(writeSealedAddExport.stderr.toLowerCase()).toContain("sealed");
+    expect(writeNoNewExportsAddExport.status).toBe(2);
+    expect(writeNoNewExportsAddExport.stderr.toLowerCase()).toContain("no-new-exports");
 
-    const editSealedInPlace = runHook({
+    const editNoNewExportsInPlace = runHook({
       hook_event_name: "PreToolUse",
       tool_name: "Edit",
       tool_input: {
-        file_path: "src/sealed.ts",
+        file_path: "src/no-new-exports.ts",
         old_string: "return 1;",
         new_string: "return 2;",
       },
       cwd: tmp,
     });
-    expect(editSealedInPlace.status).toBe(0);
+    expect(editNoNewExportsInPlace.status).toBe(0);
 
     const writeVisibleAddExport = runHook({
       hook_event_name: "PreToolUse",

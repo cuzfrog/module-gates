@@ -4,7 +4,7 @@ import type { ModuleIndex } from "../types.ts";
 import type { ModuleGateConfig } from "../config.ts";
 import { readFileSafe, applyEdits, isWithinSourceRoot, findOwningModule } from "../utils.ts";
 import { checkReadonly } from "./readonly-gate.ts";
-import { checkSealed } from "./sealed-gate.ts";
+import { checkNoNewExports } from "./no-new-exports-gate.ts";
 import { checkExports } from "./export-gate.ts";
 import { checkModuleInterfaceImports } from "./module-interface-import-gate.ts";
 import "./checkers/index.ts";
@@ -37,9 +37,9 @@ export function runGates(
     return { block: true, reason: formatDenial(filePath, readonlyResult.reason, absPath, index, cwd, config.outputModuleProseOnBlock) };
   }
 
-  const sealedResult = checkSealed(filePath, before, after, index, cwd);
-  if (sealedResult.blocked) {
-    return { block: true, reason: formatDenial(filePath, sealedResult.reason, absPath, index, cwd, config.outputModuleProseOnBlock) };
+  const noNewExportsResult = checkNoNewExports(filePath, before, after, index, cwd);
+  if (noNewExportsResult.blocked) {
+    return { block: true, reason: formatDenial(filePath, noNewExportsResult.reason, absPath, index, cwd, config.outputModuleProseOnBlock) };
   }
 
   const exportResult = checkExports(filePath, before, after, index, cwd);

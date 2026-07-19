@@ -58,29 +58,29 @@ describe("runGates", () => {
   it("blocks readonly files", () => {
     writeSource("src/locked.ts", "");
     const index = makeIndex([
-      { modulePath: path.join(tmp, "src"), descriptorFileName: "module.md", visible: null, readonly: ["module.md", "locked.ts"], sealed: [], prose: "" },
+      { modulePath: path.join(tmp, "src"), descriptorFileName: "module.md", visible: null, readonly: ["module.md", "locked.ts"], noNewExports: [], prose: "" },
     ]);
     const result = runGates("src/locked.ts", [{ oldText: "", newText: "x" }], tmp, index, cfg());
     expect(result?.block).toBe(true);
     expect(result?.reason).toContain("Readonly rule");
   });
 
-  it("blocks sealed file when adding a new export", () => {
-    writeSource("src/sealed.ts", "export function a() {}");
+  it("blocks no-new-exports file when adding a new export", () => {
+    writeSource("src/no-new-exports.ts", "export function a() {}");
     const index = makeIndex([
-      { modulePath: path.join(tmp, "src"), descriptorFileName: "module.md", visible: null, readonly: ["module.md"], sealed: ["sealed.ts"], prose: "" },
+      { modulePath: path.join(tmp, "src"), descriptorFileName: "module.md", visible: null, readonly: ["module.md"], noNewExports: ["no-new-exports.ts"], prose: "" },
     ]);
     const after = "export function a() {}\nexport function b() {}";
-    const result = runGates("src/sealed.ts", [{ oldText: "export function a() {}", newText: after }], tmp, index, cfg());
+    const result = runGates("src/no-new-exports.ts", [{ oldText: "export function a() {}", newText: after }], tmp, index, cfg());
     expect(result?.block).toBe(true);
-    expect(result?.reason).toContain("Sealed rule");
+    expect(result?.reason).toContain("No-new-exports rule");
     expect(result?.reason).toContain("b");
   });
 
   it("blocks exports not in visible list", () => {
     writeSource("src/app.ts", "export function a() {}");
     const index = makeIndex([
-      { modulePath: path.join(tmp, "src"), descriptorFileName: "module.md", visible: [{ name: "a" }], readonly: [], sealed: [], prose: "" },
+      { modulePath: path.join(tmp, "src"), descriptorFileName: "module.md", visible: [{ name: "a" }], readonly: [], noNewExports: [], prose: "" },
     ]);
     const after = "export function a() {}\nexport function b() {}";
     const result = runGates("src/app.ts", [{ oldText: "export function a() {}", newText: after }], tmp, index, cfg());
@@ -88,13 +88,13 @@ describe("runGates", () => {
     expect(result?.reason).toContain("b");
   });
 
-  it("returns undefined when edit does not add exports on sealed file", () => {
-    writeSource("src/sealed.ts", "export function a() { return 1; }");
+  it("returns undefined when edit does not add exports on no-new-exports file", () => {
+    writeSource("src/no-new-exports.ts", "export function a() { return 1; }");
     const index = makeIndex([
-      { modulePath: path.join(tmp, "src"), descriptorFileName: "module.md", visible: null, readonly: [], sealed: ["sealed.ts"], prose: "" },
+      { modulePath: path.join(tmp, "src"), descriptorFileName: "module.md", visible: null, readonly: [], noNewExports: ["no-new-exports.ts"], prose: "" },
     ]);
     const result = runGates(
-      "src/sealed.ts",
+      "src/no-new-exports.ts",
       [{ oldText: "return 1;", newText: "return 2;" }],
       tmp,
       index,
@@ -109,7 +109,7 @@ describe("formatDenial", () => {
     const modulePath = path.join(tmp, "src");
     const index: ModuleIndex = {
       contracts: [
-        { modulePath, descriptorFileName: "module.md", visible: null, readonly: ["locked.ts"], sealed: [], prose: "Greeting module." },
+        { modulePath, descriptorFileName: "module.md", visible: null, readonly: ["locked.ts"], noNewExports: [], prose: "Greeting module." },
       ],
       dirToModule: new Map([[modulePath, modulePath]]),
     };
@@ -123,7 +123,7 @@ describe("formatDenial", () => {
     const modulePath = path.join(tmp, "src");
     const index: ModuleIndex = {
       contracts: [
-        { modulePath, descriptorFileName: "module.md", visible: null, readonly: ["locked.ts"], sealed: [], prose: "Greeting module." },
+        { modulePath, descriptorFileName: "module.md", visible: null, readonly: ["locked.ts"], noNewExports: [], prose: "Greeting module." },
       ],
       dirToModule: new Map([[modulePath, modulePath]]),
     };
@@ -136,7 +136,7 @@ describe("formatDenial", () => {
     const modulePath = path.join(tmp, "src");
     const index: ModuleIndex = {
       contracts: [
-        { modulePath, descriptorFileName: "MODULE.md", visible: null, readonly: ["locked.ts"], sealed: [], prose: "Greeting module." },
+        { modulePath, descriptorFileName: "MODULE.md", visible: null, readonly: ["locked.ts"], noNewExports: [], prose: "Greeting module." },
       ],
       dirToModule: new Map([[modulePath, modulePath]]),
     };
@@ -267,7 +267,7 @@ describe("runGates descriptor protection (independent of readonly list)", () => 
     const moduleAbs = path.join(modulePath, "MODULE.md");
     fs.writeFileSync(
       moduleAbs,
-      "---\nsealed: [config.ts]\n---\nProse.",
+      "---\nno-new-exports: [config.ts]\n---\nProse.",
       "utf-8",
     );
     const index: ModuleIndex = {
@@ -277,7 +277,7 @@ describe("runGates descriptor protection (independent of readonly list)", () => 
           descriptorFileName: "MODULE.md",
           visible: null,
           readonly: [],
-          sealed: ["config.ts"],
+          noNewExports: ["config.ts"],
           prose: "Prose.",
         },
       ],
@@ -299,10 +299,10 @@ describe("runGates descriptor protection (independent of readonly list)", () => 
     const modulePath = path.join(tmpDir, "src");
     fs.mkdirSync(modulePath, { recursive: true });
     const moduleAbs = path.join(modulePath, "module.md");
-    fs.writeFileSync(moduleAbs, "---\nsealed: [config.ts]\n---\nProse.", "utf-8");
+    fs.writeFileSync(moduleAbs, "---\nno-new-exports: [config.ts]\n---\nProse.", "utf-8");
     const index: ModuleIndex = {
       contracts: [
-        { modulePath, descriptorFileName: "module.md", visible: null, readonly: [], sealed: ["config.ts"], prose: "Prose." },
+        { modulePath, descriptorFileName: "module.md", visible: null, readonly: [], noNewExports: ["config.ts"], prose: "Prose." },
       ],
       dirToModule: new Map([[modulePath, modulePath]]),
     };

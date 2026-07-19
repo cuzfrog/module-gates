@@ -1,5 +1,5 @@
 ---
-sealed:
+no-new-exports:
   - go.test.ts
   - go.ts
   - index.ts

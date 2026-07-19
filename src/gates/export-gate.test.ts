@@ -17,7 +17,7 @@ describe("checkExports", () => {
         descriptorFileName: "module.md",
         visible: [{ name: "allowedFn" }],
         readonly: ["module.md"],
-        sealed: [],
+        noNewExports: [],
         prose: "",
       },
     ]);
@@ -43,7 +43,7 @@ describe("checkExports", () => {
         descriptorFileName: "module.md",
         visible: [{ name: "allowedFn" }],
         readonly: ["module.md"],
-        sealed: [],
+        noNewExports: [],
         prose: "",
       },
     ]);
@@ -62,7 +62,7 @@ describe("checkExports", () => {
         descriptorFileName: "module.md",
         visible: [],
         readonly: ["module.md"],
-        sealed: [],
+        noNewExports: [],
         prose: "",
       },
     ]);
@@ -86,7 +86,7 @@ describe("checkExports", () => {
         descriptorFileName: "module.md",
         visible: [{ name: "sharedFn" }, { name: "rootOnly" }],
         readonly: ["module.md"],
-        sealed: [],
+        noNewExports: [],
         prose: "",
       },
       {
@@ -94,7 +94,7 @@ describe("checkExports", () => {
         descriptorFileName: "module.md",
         visible: [{ name: "sharedFn" }, { name: "srcOnly" }],
         readonly: ["module.md"],
-        sealed: [],
+        noNewExports: [],
         prose: "",
       },
     ]);
@@ -116,7 +116,7 @@ describe("checkExports", () => {
         descriptorFileName: "module.md",
         visible: null,
         readonly: ["module.md"],
-        sealed: [],
+        noNewExports: [],
         prose: "",
       },
     ]);
@@ -135,7 +135,7 @@ describe("checkExports", () => {
         descriptorFileName: "module.md",
         visible: [],
         readonly: ["module.md"],
-        sealed: [],
+        noNewExports: [],
         prose: "",
       },
     ]);
@@ -157,7 +157,7 @@ describe("checkExports", () => {
         descriptorFileName: "module.md",
         visible: [],
         readonly: ["module.md"],
-        sealed: [],
+        noNewExports: [],
         prose: "",
       },
     ]);
@@ -175,7 +175,7 @@ describe("checkExports", () => {
         descriptorFileName: "module.md",
         visible: [{ name: "allowedFn" }],
         readonly: ["module.md"],
-        sealed: [],
+        noNewExports: [],
         prose: "",
       },
     ]);
@@ -211,7 +211,7 @@ describe("checkExports", () => {
         descriptorFileName: "module.md",
         visible: [{ name: "sharedFn" }, { name: "rootOnly" }],
         readonly: ["module.md"],
-        sealed: [],
+        noNewExports: [],
         prose: "",
       },
       {
@@ -219,7 +219,7 @@ describe("checkExports", () => {
         descriptorFileName: "module.md",
         visible: [{ name: "sharedFn" }, { name: "srcOnly" }],
         readonly: ["module.md"],
-        sealed: [],
+        noNewExports: [],
         prose: "",
       },
     ]);
@@ -238,7 +238,7 @@ describe("checkExports", () => {
         descriptorFileName: "module.md",
         visible: null,
         readonly: ["module.md"],
-        sealed: [],
+        noNewExports: [],
         prose: "",
       },
       {
@@ -246,7 +246,7 @@ describe("checkExports", () => {
         descriptorFileName: "module.md",
         visible: [{ name: "childFn" }],
         readonly: ["module.md"],
-        sealed: [],
+        noNewExports: [],
         prose: "",
       },
     ]);
@@ -265,7 +265,7 @@ describe("checkExports", () => {
         descriptorFileName: "module.md",
         visible: [{ name: "rootOnly" }],
         readonly: ["module.md"],
-        sealed: [],
+        noNewExports: [],
         prose: "",
       },
       {
@@ -273,7 +273,7 @@ describe("checkExports", () => {
         descriptorFileName: "module.md",
         visible: [{ name: "sharedFn" }],
         readonly: ["module.md"],
-        sealed: [],
+        noNewExports: [],
         prose: "",
       },
       {
@@ -281,7 +281,7 @@ describe("checkExports", () => {
         descriptorFileName: "module.md",
         visible: [{ name: "leafOnly" }],
         readonly: ["module.md"],
-        sealed: [],
+        noNewExports: [],
         prose: "",
       },
     ]);
@@ -307,7 +307,7 @@ describe("checkExports", () => {
         descriptorFileName: "module.md",
         visible: [{ name: "rootOnly" }],
         readonly: ["module.md"],
-        sealed: [],
+        noNewExports: [],
         prose: "",
       },
       {
@@ -315,7 +315,7 @@ describe("checkExports", () => {
         descriptorFileName: "module.md",
         visible: [{ name: "sharedFn" }, { name: "rootOnly" }],
         readonly: ["module.md"],
-        sealed: [],
+        noNewExports: [],
         prose: "",
       },
     ]);

@@ -10,7 +10,7 @@ export type ModuleContract = {
   descriptorFileName: string;
   visible: Signature[] | null;
   readonly: string[];
-  sealed: string[];
+  noNewExports: string[];
   prose: string;
 };
 

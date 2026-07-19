@@ -1,5 +1,5 @@
 ---
-sealed:
+no-new-exports:
   - config.ts
   - config.test.ts
   - import-test.ts

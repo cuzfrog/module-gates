@@ -16,7 +16,7 @@ describe("checkReadonly", () => {
         descriptorFileName: "module.md",
         visible: null,
         readonly: ["config.json", "module.md"],
-        sealed: [],
+        noNewExports: [],
         prose: "",
       },
     ]);
@@ -32,7 +32,7 @@ describe("checkReadonly", () => {
         descriptorFileName: "module.md",
         visible: null,
         readonly: ["vendor", "module.md"],
-        sealed: [],
+        noNewExports: [],
         prose: "",
       },
     ]);
@@ -48,7 +48,7 @@ describe("checkReadonly", () => {
         descriptorFileName: "module.md",
         visible: null,
         readonly: ["generated*", "module.md"],
-        sealed: [],
+        noNewExports: [],
         prose: "",
       },
     ]);
@@ -64,7 +64,7 @@ describe("checkReadonly", () => {
         descriptorFileName: "module.md",
         visible: null,
         readonly: ["config.json", "module.md"],
-        sealed: [],
+        noNewExports: [],
         prose: "",
       },
     ]);
@@ -80,7 +80,7 @@ describe("checkReadonly", () => {
         descriptorFileName: "module.md",
         visible: null,
         readonly: ["module.md"],
-        sealed: [],
+        noNewExports: [],
         prose: "",
       },
     ]);
@@ -96,7 +96,7 @@ describe("checkReadonly", () => {
         descriptorFileName: "module.md",
         visible: null,
         readonly: ["src/secret.ts", "module.md"],
-        sealed: [],
+        noNewExports: [],
         prose: "",
       },
       {
@@ -104,7 +104,7 @@ describe("checkReadonly", () => {
         descriptorFileName: "module.md",
         visible: null,
         readonly: ["module.md"],
-        sealed: [],
+        noNewExports: [],
         prose: "",
       },
     ]);
@@ -120,7 +120,7 @@ describe("checkReadonly", () => {
         descriptorFileName: "CONTEXT.md",
         visible: null,
         readonly: ["locked.ts"],
-        sealed: [],
+        noNewExports: [],
         prose: "",
       },
     ]);
@@ -139,7 +139,7 @@ describe("checkReadonly", () => {
         descriptorFileName: "MODULE.md",
         visible: null,
         readonly: ["locked.ts"],
-        sealed: [],
+        noNewExports: [],
         prose: "",
       },
     ]);

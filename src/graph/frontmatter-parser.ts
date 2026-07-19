@@ -5,7 +5,7 @@ export type VisibleEntryRaw = string | { path: string; modifier?: string };
 export type ModuleFrontmatter = {
   visible?: VisibleEntryRaw[];
   readonly?: string[];
-  sealed?: string[];
+  "no-new-exports"?: string[];
 };
 
 export function parseVisibleEntry(raw: VisibleEntryRaw): Signature {

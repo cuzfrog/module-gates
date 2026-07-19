@@ -1,5 +1,5 @@
 ---
-sealed:
+no-new-exports:
   - frontmatter-parser.test.ts
   - frontmatter-parser.ts
   - index.ts

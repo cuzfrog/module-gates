@@ -158,8 +158,8 @@ describe("isWithinSourceRoot", () => {
 });
 
 describe("getAncestorContracts", () => {
-  function contract(modulePath: string, readonly: string[] = [], sealed: string[] = []): ModuleContract {
-    return { modulePath, descriptorFileName: "module.md", visible: null, readonly, sealed, prose: "" };
+  function contract(modulePath: string, readonly: string[] = [], noNewExports: string[] = []): ModuleContract {
+    return { modulePath, descriptorFileName: "module.md", visible: null, readonly, noNewExports, prose: "" };
   }
 
   it("returns matching contracts for file under module path", () => {
@@ -199,7 +199,7 @@ describe("getAncestorContracts", () => {
       descriptorFileName: "module.md",
       visible: null,
       readonly: ["a.ts"],
-      sealed: ["b.ts"],
+      noNewExports: ["b.ts"],
       prose: "",
     });
   });

@@ -1,6 +1,6 @@
 {
   "name": "@cuzfrog/pi-module-gates",
-  "version": "0.21.0",
+  "version": "0.22.0",
   "description": "pi extension that controls the entropy of the codebase by enforcing code module boundaries.",
   "keywords": [
     "pi-package"

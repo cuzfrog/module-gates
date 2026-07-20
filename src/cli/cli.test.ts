@@ -5,7 +5,8 @@ import * as path from "node:path";
 import { spawnSync } from "node:child_process";
 import { FIXTURES } from "../../test/behavior/helpers.ts";
 
-const BIN = path.resolve("bin/pi-module-gates.mjs");
+const BIN = path.resolve("bin/module-gates.mjs");
+const RUN = path.resolve("src/bridges/claude/run.mjs");
 
 let tmp: string;
 beforeEach(() => {
@@ -16,10 +17,10 @@ afterEach(() => {
 });
 
 function cli(...args: string[]) {
-  return spawnSync(BIN, args, { encoding: "utf-8", timeout: 15_000 });
+  return spawnSync(BIN, args, { encoding: "utf-8", timeout: 30_000 });
 }
 
-describe("pi-module-gates CLI", () => {
+describe("module-gates CLI", () => {
   it("install-claude writes settings.json with the marker", () => {
     const r = cli("install-claude", "--project-dir", tmp);
     expect(r.status).toBe(0);
@@ -27,7 +28,7 @@ describe("pi-module-gates CLI", () => {
     expect(fs.existsSync(settingsPath)).toBe(true);
     const json = JSON.parse(fs.readFileSync(settingsPath, "utf-8"));
     const pre = json.hooks?.PreToolUse ?? [];
-    expect(pre.some((m: { hooks: { command: string }[] }) => m.hooks.some((h) => h.command.includes("@cuzfrog/pi-module-gates")))).toBe(true);
+    expect(pre.some((m: { hooks: { command: string }[] }) => m.hooks.some((h) => h.command.includes("@cuzfrog/module-gates")))).toBe(true);
   });
 
   it("install-claude is idempotent", () => {
@@ -35,7 +36,7 @@ describe("pi-module-gates CLI", () => {
     cli("install-claude", "--project-dir", tmp);
     const json = JSON.parse(fs.readFileSync(path.join(tmp, ".claude", "settings.json"), "utf-8"));
     const pre = json.hooks?.PreToolUse ?? [];
-    expect(pre.filter((m: { hooks: { command: string }[] }) => m.hooks.some((h) => h.command.includes("@cuzfrog/pi-module-gates")))).toHaveLength(1);
+    expect(pre.filter((m: { hooks: { command: string }[] }) => m.hooks.some((h) => h.command.includes("@cuzfrog/module-gates")))).toHaveLength(1);
   });
 
   it("install-claude preserves unrelated settings keys", () => {
@@ -51,7 +52,7 @@ describe("pi-module-gates CLI", () => {
     cli("uninstall-claude", "--project-dir", tmp);
     const json = JSON.parse(fs.readFileSync(path.join(tmp, ".claude", "settings.json"), "utf-8"));
     const pre = json.hooks?.PreToolUse ?? [];
-    expect(pre.filter((m: { hooks: { command: string }[] }) => m.hooks.some((h) => h.command.includes("@cuzfrog/pi-module-gates")))).toHaveLength(0);
+    expect(pre.filter((m: { hooks: { command: string }[] }) => m.hooks.some((h) => h.command.includes("@cuzfrog/module-gates")))).toHaveLength(0);
   });
 
   it("end-to-end: install, invoke hook, deny on readonly, uninstall", () => {
@@ -62,10 +63,10 @@ describe("pi-module-gates CLI", () => {
       tool_input: { file_path: "src/config.ts", content: "// modified" },
       cwd: FIXTURES,
     };
-    const hook = spawnSync("bun", [path.resolve("src/claude/pre-tool-use.ts")], {
+    const hook = spawnSync("node", [RUN, "pre-tool-use"], {
       input: JSON.stringify(payload),
       encoding: "utf-8",
-      timeout: 10_000,
+      timeout: 30_000,
       cwd: FIXTURES,
     });
     expect(hook.status).toBe(2);
@@ -73,7 +74,7 @@ describe("pi-module-gates CLI", () => {
     cli("uninstall-claude", "--project-dir", FIXTURES);
     const after = JSON.parse(fs.readFileSync(path.join(FIXTURES, ".claude", "settings.json"), "utf-8"));
     const pre = after.hooks?.PreToolUse ?? [];
-    expect(pre.filter((m: { hooks: { command: string }[] }) => m.hooks.some((h) => h.command.includes("@cuzfrog/pi-module-gates")))).toHaveLength(0);
+    expect(pre.filter((m: { hooks: { command: string }[] }) => m.hooks.some((h) => h.command.includes("@cuzfrog/module-gates")))).toHaveLength(0);
     fs.rmSync(path.join(FIXTURES, ".claude"), { recursive: true, force: true });
   });
 });

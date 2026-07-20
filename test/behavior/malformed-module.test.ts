@@ -6,11 +6,11 @@ import {
   doWrite,
 } from "./helpers.ts";
 
-vi.mock("../../src/config.ts", () => ({
+vi.mock("../../src/core/config.ts", () => ({
   loadConfig: () => ({ moduleDescriptorFileName: "module.md", moduleDescriptorReadonly: "file", sourceRoots: [""] }),
 }));
 
-import mod from "../../src/index.ts";
+import mod from "../../src/bridges/pi/index.ts";
 
 describe("malformed frontmatter", () => {
   let mock: MockExtensionAPI;

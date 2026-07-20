@@ -8,11 +8,11 @@ import {
   doEdit,
 } from "./helpers.ts";
 
-vi.mock("../../src/config.ts", () => ({
+vi.mock("../../src/core/config.ts", () => ({
   loadConfig: () => ({ moduleDescriptorFileName: "module.md", moduleDescriptorReadonly: "frontmatter", sourceRoots: [""] }),
 }));
 
-import mod from "../../src/index.ts";
+import mod from "../../src/bridges/pi/index.ts";
 
 describe("frontmatter readonly mode", () => {
   let mock: MockExtensionAPI;

@@ -80,7 +80,7 @@ Also refer to @README.md
 
 ## File Edit Checklist
 Pre-action:
-- Before adding utility functions/logic, check `src/utils/` for reuse.
+- Before adding utility functions/logic, check `src/core/utils/` for reuse.
 
 Post-action:
 - After file edit (semantic or logic change), run: `npm run test`

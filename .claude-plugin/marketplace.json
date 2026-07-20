@@ -1,0 +1,15 @@
+{
+  "name": "cuzfrog",
+  "owner": {
+    "name": "Cause Chung",
+    "email": "cuzfrog@gmail.com"
+  },
+  "plugins": [
+    {
+      "name": "module-gates",
+      "source": "./",
+      "description": "Enforce module boundary contracts (readonly, no-new-exports) on Claude Code edits.",
+      "category": "development"
+    }
+  ]
+}

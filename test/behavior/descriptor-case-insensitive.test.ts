@@ -7,17 +7,17 @@ import {
   doWrite,
   doEdit,
 } from "./helpers.ts";
-import type { ModuleGateConfig } from "../../src/config.ts";
+import type { ModuleGateConfig } from "../../src/core/config.ts";
 
 const { mockedLoadConfig } = vi.hoisted(() => ({
   mockedLoadConfig: vi.fn(),
 }));
 
-vi.mock("../../src/config.ts", () => ({
+vi.mock("../../src/core/config.ts", () => ({
   loadConfig: mockedLoadConfig,
 }));
 
-import mod from "../../src/index.ts";
+import mod from "../../src/bridges/pi/index.ts";
 
 function setConfig(over: Partial<ModuleGateConfig>): void {
   mockedLoadConfig.mockReturnValue({

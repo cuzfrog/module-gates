@@ -6,7 +6,7 @@ import {
   doWrite,
 } from "./helpers.ts";
 
-vi.mock("../../src/config.ts", () => ({
+vi.mock("../../src/core/config.ts", () => ({
   loadConfig: () => ({
     moduleDescriptorFileName: "module.md",
     moduleDescriptorReadonly: "file",
@@ -17,7 +17,7 @@ vi.mock("../../src/config.ts", () => ({
   }),
 }));
 
-import mod from "../../src/index.ts";
+import mod from "../../src/bridges/pi/index.ts";
 
 describe("module interface import gating", () => {
   let mock: MockExtensionAPI;

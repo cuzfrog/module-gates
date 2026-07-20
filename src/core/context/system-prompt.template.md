@@ -7,6 +7,8 @@ Each `{{descriptorFileName}}` gates its branching point in the tree.
 {{#if descriptorReadonly}}- {{descriptorReadonly}}{{/if}}
 {{#if moduleInterfaceImportGate}}- {{moduleInterfaceImportGate}}{{/if}}
 
+See @cuzfrog/module-gates#README.md for configurations.
+
 ### Glossary
 - `module`: a directory containing code, all files in its recursive subdirectories are internal files of the module;
 - `external files`: files not in the module directory or subdirectories;

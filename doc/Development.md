@@ -102,11 +102,8 @@ TypeScript runs on the fly — there is no compile step:
 
 ## Publishing
 
-npm packages cannot be renamed, so the generalized package ships under a new name and the old one is deprecated:
-
 1. Bump `version` in `package.json` (package name is `@cuzfrog/module-gates`).
-2. `npm publish` — `publishConfig` already sets public access and provenance (provenance requires publishing from GitHub Actions with an `NPM_TOKEN` secret).
-3. Deprecate the old package once: `npm deprecate @cuzfrog/pi-module-gates "Renamed to @cuzfrog/module-gates"`.
-4. Old `@cuzfrog/pi-module-gates` versions stay installable; new development lands on `@cuzfrog/module-gates` only.
+2. `npm publish --no-provenance` — `publishConfig` already sets public access and provenance (`--no-provenance` is for local publish the first time).
+3. see @AGENTS_GIT.md for CI publish
 
 The Claude plugin is installed from this git repo via the marketplace, not from npm. When the repo is renamed to `module-gates`, update the marketplace command in README and the homepage/repository URLs in package.json.

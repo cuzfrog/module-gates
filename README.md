@@ -65,6 +65,37 @@ npx module-gates install-claude
 ```
 This writes `PreToolUse` and `SessionStart` hooks into `.claude/settings.json`; `npx module-gates uninstall-claude` removes them. The `SessionStart` hook injects the system prompt hint automatically.
 
+Or reuse an existing pi installation by pointing hooks at it manually in `~/.claude/settings.json`:
+```json
+{
+  "hooks": {
+    "PreToolUse": [
+      {
+        "matcher": "Edit|MultiEdit|Write",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "node \"$HOME/.pi/agent/npm/node_modules/@cuzfrog/module-gates/src/bridges/claude/run.mjs\" pre-tool-use"
+          }
+        ]
+      }
+    ],
+    "SessionStart": [
+      {
+        "matcher": "startup|resume|clear",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "node \"$HOME/.pi/agent/npm/node_modules/@cuzfrog/module-gates/src/bridges/claude/run.mjs\" session-start"
+          }
+        ]
+      }
+    ]
+  }
+}
+```
+The pi install directory may differ; locate `run.mjs` under your pi npm root. The `SessionStart` hook (system prompt injection) is optional — `PreToolUse` alone enforces the gates.
+
 ## Module Descriptor Semantics
 
 A module descriptor is a Markdown file (default name: `MODULE.md`) placed in a directory. You can piggy-back on your module context file for example `CONTEXT.md`. A `MODULE.md` only enforces its own immediate directory.

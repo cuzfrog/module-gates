@@ -8,11 +8,11 @@ import {
   doEdit,
 } from "./helpers.ts";
 
-vi.mock("../../src/config.ts", () => ({
+vi.mock("../../src/core/config.ts", () => ({
   loadConfig: () => ({ moduleDescriptorFileName: "module.md", moduleDescriptorReadonly: "file", sourceRoots: [""] }),
 }));
 
-import mod from "../../src/index.ts";
+import mod from "../../src/bridges/pi/index.ts";
 
 describe("no-new-exports gating", () => {
   let mock: MockExtensionAPI;

@@ -1,9 +1,12 @@
 {
-  "name": "@cuzfrog/pi-module-gates",
-  "version": "0.22.0",
-  "description": "pi extension that controls the entropy of the codebase by enforcing code module boundaries.",
+  "name": "@cuzfrog/module-gates",
+  "version": "1.0.0",
+  "description": "Controls the entropy of the codebase by enforcing code module boundaries. Ships bridges for pi and Claude Code.",
   "keywords": [
-    "pi-package"
+    "pi-package",
+    "claude-code",
+    "module-boundaries",
+    "architecture"
   ],
   "type": "module",
   "scripts": {
@@ -11,37 +14,42 @@
     "test": "vitest run"
   },
   "bin": {
-    "pi-module-gates": "./bin/pi-module-gates.mjs"
+    "module-gates": "./bin/module-gates.mjs"
   },
   "pi": {
     "extensions": [
-      "./src/index.ts"
+      "./src/bridges/pi/index.ts"
     ],
     "skills": [
       "./skills"
     ]
   },
   "dependencies": {
+    "jiti": "2.7.0",
     "yaml": "2.9.0"
   },
   "peerDependencies": {
     "@earendil-works/pi-coding-agent": "*"
   },
+  "peerDependenciesMeta": {
+    "@earendil-works/pi-coding-agent": {
+      "optional": true
+    }
+  },
   "devDependencies": {
     "@earendil-works/pi-coding-agent": "0.79.8",
     "@types/node": "22.19.19",
-    "bun-types": "1.3.14",
     "typescript": "5.9.3",
     "vitest": "4.1.7"
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/cuzfrog/pi-module-gates.git"
+    "url": "git+https://github.com/cuzfrog/module-gates.git"
   },
   "bugs": {
-    "url": "https://github.com/cuzfrog/pi-module-gates/issues"
+    "url": "https://github.com/cuzfrog/module-gates/issues"
   },
-  "homepage": "https://github.com/cuzfrog/pi-module-gates#readme",
+  "homepage": "https://github.com/cuzfrog/module-gates#readme",
   "license": "MIT",
   "author": "Cause Chung (cuzfrog@gmail.com)",
   "files": [
@@ -52,7 +60,7 @@
     "LICENSE"
   ],
   "engines": {
-    "bun": ">=1.3.0"
+    "node": ">=20"
   },
   "publishConfig": {
     "access": "public",

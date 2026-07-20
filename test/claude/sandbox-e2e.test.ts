@@ -4,13 +4,13 @@ import * as os from "node:os";
 import * as path from "node:path";
 import { spawnSync } from "node:child_process";
 
-const HOOK = path.resolve("src/claude/pre-tool-use.ts");
-const BIN = path.resolve("bin/pi-module-gates.mjs");
-const HOOK_MARKER = "@cuzfrog/pi-module-gates";
+const RUN = path.resolve("src/bridges/claude/run.mjs");
+const BIN = path.resolve("bin/module-gates.mjs");
+const HOOK_MARKER = "@cuzfrog/module-gates";
 
 beforeAll(() => {
-  if (!fs.existsSync(HOOK)) {
-    throw new Error(`${HOOK} not found.`);
+  if (!fs.existsSync(RUN)) {
+    throw new Error(`${RUN} not found.`);
   }
   if (!fs.existsSync(BIN)) {
     throw new Error(`${BIN} not found.`);
@@ -49,21 +49,19 @@ function materializeProject(): void {
       "---",
       "readonly: [locked.ts]",
       "no-new-exports: [no-new-exports.ts]",
-      "visible: [greet]",
       "---",
       "",
-      "Sandbox inner module exercising all three gates.",
+      "Sandbox inner module exercising both gates.",
       "",
     ].join("\n"),
   );
   write("src/locked.ts", "export const LOCKED = 1;\n");
   write("src/no-new-exports.ts", "export function existingFn() { return 1; }\n");
-  write("src/greet.ts", "export function greet(name: string) { return name; }\n");
   write("src/app.ts", "export const app = 1;\n");
 }
 
 function runHook(stdinObj: unknown) {
-  return spawnSync("bun", [HOOK], {
+  return spawnSync("node", [RUN, "pre-tool-use"], {
     input: JSON.stringify(stdinObj),
     encoding: "utf-8",
     timeout: 30_000,
@@ -71,8 +69,8 @@ function runHook(stdinObj: unknown) {
   });
 }
 
-describe("sandbox e2e: install + all three gates", () => {
-  it("installs the hook and exercises readonly, no-new-exports, visible deny+allow", { timeout: 60_000 }, () => {
+describe("sandbox e2e: install + both gates", () => {
+  it("installs the hook and exercises readonly and no-new-exports deny+allow", { timeout: 60_000 }, () => {
     materializeProject();
 
     const install = spawnSync(BIN, ["install-claude", "--project-dir", tmp], {
@@ -131,29 +129,5 @@ describe("sandbox e2e: install + all three gates", () => {
       cwd: tmp,
     });
     expect(editNoNewExportsInPlace.status).toBe(0);
-
-    const writeVisibleAddExport = runHook({
-      hook_event_name: "PreToolUse",
-      tool_name: "Write",
-      tool_input: {
-        file_path: "src/greet.ts",
-        content: "export function greet(name: string) { return name; }\nexport function leaky() { return 1; }\n",
-      },
-      cwd: tmp,
-    });
-    expect(writeVisibleAddExport.status).toBe(2);
-    const stderr = writeVisibleAddExport.stderr.toLowerCase();
-    expect(stderr.includes("visible") || stderr.includes("export")).toBe(true);
-
-    const writeVisibleOnlyGreet = runHook({
-      hook_event_name: "PreToolUse",
-      tool_name: "Write",
-      tool_input: {
-        file_path: "src/greet.ts",
-        content: "export function greet(name: string) { return name; }\n",
-      },
-      cwd: tmp,
-    });
-    expect(writeVisibleOnlyGreet.status).toBe(0);
   });
 });

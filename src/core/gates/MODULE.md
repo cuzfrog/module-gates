@@ -1,0 +1,12 @@
+---
+no-new-exports:
+  - index.ts
+  - module-interface-import-gate.test.ts
+  - module-interface-import-gate.ts
+  - no-new-exports-gate.test.ts
+  - no-new-exports-gate.ts
+  - readonly-gate.test.ts
+  - readonly-gate.ts
+  - run-gates.test.ts
+  - run-gates.ts
+---

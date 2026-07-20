@@ -2,10 +2,10 @@ import * as fs from "node:fs";
 import * as path from "node:path";
 import {
   readSettings,
-  removePreToolUse,
+  removeHooks,
   writeSettings,
   HOOK_MARKER,
-} from "../claude/settings-writer.ts";
+} from "../bridges/claude/settings-writer.ts";
 
 export type UninstallClaudeOptions = {
   projectDir: string;
@@ -26,15 +26,15 @@ export function uninstallClaude(opts: UninstallClaudeOptions): UninstallClaudeRe
 
   const before = readSettings(projectDir);
   const beforeHadMarker = JSON.stringify(before).includes(HOOK_MARKER);
-  const after = removePreToolUse(before);
+  const after = removeHooks(before);
   const afterHasMarker = JSON.stringify(after).includes(HOOK_MARKER);
 
   if (beforeHadMarker && !afterHasMarker) {
     writeSettings(projectDir, after);
-    process.stdout.write(`Removed pi-module-gates hooks from ${settingsPath}.\n`);
+    process.stdout.write(`Removed module-gates hooks from ${settingsPath}.\n`);
     return { ok: true, removed: true, written: settingsPath };
   }
 
-  process.stdout.write(`No pi-module-gates hooks found in ${settingsPath}.\n`);
+  process.stdout.write(`No module-gates hooks found in ${settingsPath}.\n`);
   return { ok: true, removed: false, written: settingsPath };
 }

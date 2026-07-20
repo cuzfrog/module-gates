@@ -1,0 +1,11 @@
+{
+  "name": "module-gates",
+  "version": "0.22.0",
+  "description": "Enforce module boundary contracts (readonly, no-new-exports) on Claude Code edits.",
+  "author": {
+    "name": "Cause Chung",
+    "email": "cuzfrog@gmail.com"
+  },
+  "homepage": "https://github.com/cuzfrog/module-gates",
+  "hooks": "./src/bridges/claude/hooks.json"
+}

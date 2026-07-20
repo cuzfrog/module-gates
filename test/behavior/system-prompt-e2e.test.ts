@@ -7,11 +7,11 @@ import {
   doBeforeAgentStart,
 } from "./helpers.ts";
 
-vi.mock("../../src/config.ts", () => ({
+vi.mock("../../src/core/config.ts", () => ({
   loadConfig: () => ({ moduleDescriptorFileName: "module.md", moduleDescriptorReadonly: "file", sourceRoots: [""] }),
 }));
 
-import mod from "../../src/index.ts";
+import mod from "../../src/bridges/pi/index.ts";
 
 describe("system prompt augmentation", () => {
   let mock: MockExtensionAPI;

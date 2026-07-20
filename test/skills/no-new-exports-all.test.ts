@@ -4,13 +4,13 @@ import { mkdtempSync, writeFileSync, rmSync, mkdirSync, existsSync, readFileSync
 import { join, sep } from "node:path";
 import { execSync } from "node:child_process";
 import { SUPPORTED_EXTENSIONS } from "../../skills/module-no-new-exports-all/scripts/no-new-exports-all.mjs";
-import { getChecker } from "../../src/gates/checkers/registry.ts";
-import "../../src/gates/checkers/typescript.ts";
-import "../../src/gates/checkers/rust.ts";
-import "../../src/gates/checkers/java.ts";
-import "../../src/gates/checkers/go.ts";
-import "../../src/gates/checkers/kotlin.ts";
-import "../../src/gates/checkers/scala.ts";
+import { getChecker } from "../../src/core/gates/checkers/registry.ts";
+import "../../src/core/gates/checkers/typescript.ts";
+import "../../src/core/gates/checkers/rust.ts";
+import "../../src/core/gates/checkers/java.ts";
+import "../../src/core/gates/checkers/go.ts";
+import "../../src/core/gates/checkers/kotlin.ts";
+import "../../src/core/gates/checkers/scala.ts";
 
 const scriptPath = join(
   import.meta.dirname,
@@ -22,7 +22,7 @@ const scriptPath = join(
   "no-new-exports-all.mjs",
 );
 
-const checkersDir = join(import.meta.dirname, "..", "..", "src", "gates", "checkers");
+const checkersDir = join(import.meta.dirname, "..", "..", "src", "core", "gates", "checkers");
 
 function extractCheckerExtensions(): Set<string> {
   const extensions = new Set<string>();
@@ -73,7 +73,7 @@ describe("no-new-exports-all.mjs", () => {
 
     writeFileSync(
       join(dir, "src", "module.md"),
-      "---\nvisible: [greet]\n---\n\nSome prose.\n",
+      "---\nnote: [greet]\n---\n\nSome prose.\n",
     );
     writeFileSync(join(dir, "src", "app.ts"), "export function greet() {}");
     writeFileSync(join(dir, "src", "utils.ts"), "export function helper() {}");
@@ -90,7 +90,7 @@ describe("no-new-exports-all.mjs", () => {
     expect(updated).not.toContain("nested.ts");
 
     // Should preserve existing fields
-    expect(updated).toContain("visible:");
+    expect(updated).toContain("note:");
     expect(updated).toContain("greet");
     expect(updated).toContain("Some prose.");
 
@@ -151,7 +151,7 @@ describe("no-new-exports-all.mjs", () => {
 
     writeFileSync(
       join(dir, "src", "module.md"),
-      "---\nvisible: [greet]\n---\n\n",
+      "---\nnote: [greet]\n---\n\n",
     );
     writeFileSync(join(dir, "src", "app.ts"), "");
 
@@ -169,7 +169,7 @@ describe("no-new-exports-all.mjs", () => {
   it("dry-run does not modify files", () => {
     const dir = setupFixture();
 
-    const original = "---\nvisible: [greet]\n---\n\n";
+    const original = "---\nnote: [greet]\n---\n\n";
     writeFileSync(join(dir, "src", "module.md"), original);
     writeFileSync(join(dir, "src", "app.ts"), "");
 

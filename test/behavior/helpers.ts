@@ -51,6 +51,7 @@ export class MockExtensionAPI implements ExtensionAPI {
     return undefined;
   }
   registerMessageRenderer() {}
+  registerEntryRenderer() {}
   registerProvider() {}
   unregisterProvider() {}
   exec = async () => ({ exitCode: 0, code: 0, killed: false, stdout: "", stderr: "" });
@@ -93,6 +94,7 @@ export function makeCtx(cwd: string): ExtensionContext {
     } as any,
     modelRegistry: {} as any,
     model: undefined,
+    scopedModels: [],
     isIdle: () => true,
     isProjectTrusted: () => true,
     signal: undefined,

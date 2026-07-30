@@ -1,6 +1,6 @@
 {
   "name": "@cuzfrog/module-gates",
-  "version": "1.0.2",
+  "version": "1.0.3",
   "description": "Controls the entropy of the codebase by enforcing code module boundaries. Ships bridges for pi and Claude Code.",
   "keywords": [
     "pi-package",
@@ -37,10 +37,10 @@
     }
   },
   "devDependencies": {
-    "@earendil-works/pi-coding-agent": "0.79.8",
-    "@types/node": "22.19.19",
-    "typescript": "5.9.3",
-    "vitest": "4.1.7"
+    "@earendil-works/pi-coding-agent": "0.83.0",
+    "@types/node": "26.1.2",
+    "typescript": "7.0.2",
+    "vitest": "4.1.10"
   },
   "repository": {
     "type": "git",

@@ -4,7 +4,7 @@
 [![GitHub stars](https://img.shields.io/github/stars/cuzfrog/module-gates)](https://github.com/cuzfrog/module-gates/stargazers)
 [![GitHub last commit](https://img.shields.io/github/last-commit/cuzfrog/module-gates/main)](https://github.com/cuzfrog/module-gates/commits/main)
 [![GitHub repo size](https://img.shields.io/github/repo-size/cuzfrog/module-gates)](https://github.com/cuzfrog/module-gates)
-[![CI](https://github.com/cuzfrog/module-gates/actions/workflows/ci.yml/badge.svg)](https://github.com/cuzfrog/module-gates/actions/workflows/ci.yml)
+[![CI](https://github.com/cuzfrog/module-gates/actions/workflows/test.yml/badge.svg)](https://github.com/cuzfrog/module-gates/actions/workflows/test.yml)
 
 **English** · [简体中文](README.zh.md) · [日本語](README.ja.md)
 

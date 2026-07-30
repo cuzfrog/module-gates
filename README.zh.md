@@ -1,4 +1,4 @@
-# module-gates - 约束释放自由，边界约束混乱。
+# module-gates - Constraints liberate, liberties constrain
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
 [![GitHub stars](https://img.shields.io/github/stars/cuzfrog/module-gates)](https://github.com/cuzfrog/module-gates/stargazers)
@@ -8,7 +8,7 @@
 
 [English](README.md) · **简体中文** · [日本語](README.ja.md)
 
-Hooks 通过强制模块边界来控制代码库的熵，帮助对抗代码混乱。
+Hooks 通过强制模块边界来控制代码库的熵，帮助对抗代码Slops。
 
 支持的代理框架：
 - **pi** — pi 扩展

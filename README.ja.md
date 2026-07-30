@@ -1,4 +1,4 @@
-# module-gates - 制約が自由を解放し、境界が混乱を制限する。
+# module-gates - Constraints liberate, liberties constrain
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
 [![GitHub stars](https://img.shields.io/github/stars/cuzfrog/module-gates)](https://github.com/cuzfrog/module-gates/stargazers)
@@ -8,7 +8,7 @@
 
 [English](README.md) · [简体中文](README.zh.md) · **日本語**
 
-モジュール境界を強制することでコードベースのエントロピーを制御し、コードの混乱と戦うためのフック。
+モジュール境界を強制することでコードベースのエントロピーを制御し、コードのSlopsと戦うためのフック。
 
 対応しているエージェントフレームワーク：
 - **pi** — pi 拡張機能

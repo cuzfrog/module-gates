@@ -1,4 +1,4 @@
-# module-gates - Constraints liberate, liberties constrain
+# module-gates - Constraints liberate, liberties constrain.
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
 [![GitHub stars](https://img.shields.io/github/stars/cuzfrog/module-gates)](https://github.com/cuzfrog/module-gates/stargazers)
@@ -25,6 +25,7 @@
 
 拡張機能はエージェントの `write`/`edit` 操作を傍受し、これらの契約を強制します。違反は理由とともにブロックされます。
 
+The attempt to add 2 public helper functions is blocked, forcing the agent to re-think the design.
 ![モジュールゲート拒否の例](doc/module_gates_block.png)
 
 ### 仕組み

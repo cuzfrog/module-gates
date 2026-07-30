@@ -1,4 +1,4 @@
-# module-gates - Constraints liberate, liberties constrain
+# module-gates - Constraints liberate, liberties constrain.
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
 [![GitHub stars](https://img.shields.io/github/stars/cuzfrog/module-gates)](https://github.com/cuzfrog/module-gates/stargazers)
@@ -25,6 +25,7 @@ Hooks 通过强制模块边界来控制代码库的熵，帮助对抗代码Slops
 
 该扩展会拦截代理的 `write`/`edit` 操作并强制执行这些契约。违规操作会被阻止并附带原因。
 
+The attempt to add 2 public helper functions is blocked, forcing the agent to re-think the design.
 ![模块门拒绝示例](doc/module_gates_block.png)
 
 ### 工作原理

@@ -25,7 +25,7 @@
 
 拡張機能はエージェントの `write`/`edit` 操作を傍受し、これらの契約を強制します。違反は理由とともにブロックされます。
 
-The attempt to add 2 public helper functions is blocked, forcing the agent to re-think the design.
+2 つのパブリックヘルパー関数を追加しようとする試みはブロックされ、エージェントは設計を再考せざるを得なくなる。
 ![モジュールゲート拒否の例](doc/module_gates_block.png)
 
 ### 仕組み

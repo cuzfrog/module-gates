@@ -1,26 +1,23 @@
 # module-gates - Constraints liberate, liberties constrain.
 
-Coding-agent extension that controls the entropy of the codebase by enforcing code module boundaries.
-It helps combat slop generation and code architecture degradation.
+**English** · [简体中文](README.zh.md) · [日本語](README.ja.md)
 
-The core is agent-agnostic; per-agent **bridges** connect it to each agent:
+Hooks that controls the entropy of the codebase by enforcing module boundaries, helping combat slops.
+
+Supported agent harnesses:
 - **pi** — pi extension
 - **Claude Code** — plugin, or plain hooks installed by the CLI
 
 Adding support for another agent (qwen-code, cursor, ...) means adding a bridge.
 
-## Problem
-
-AI coding agents produce edits with limited context knowledge (myopia) — their changes may leak implementation details, and break architectural contracts (slop).
-
 ### Approach
 
-**Module contracts as guardrails.** Each directory can contain a descriptor file that declares:
+**Module contracts as guardrails.** Each directory can contain a descriptor file (default `MODULE.md`) that declares:
 
-- `readonly` — files and directories the agent must not touch
+- `readonly` — files cannot be edited
 - `no-new-exports` — files where no new exports are allowed (body still editable)
 
-The extension intercepts agent `write`/`edit` operations and enforces these contracts. Violations are blocked with a clear reason.
+The extension intercepts agent `write`/`edit` operations and enforces these contracts. Violations are blocked with a reason.
 
 The attempt to add 2 public helper functions is blocked, forcing the agent to re-think the design.
 ![Module Gate denial example](doc/module_gates_block.png)
@@ -124,11 +121,9 @@ A skill [module-no-new-exports-all](skills/module-no-new-exports-all) has been i
 | No `MODULE.md` | Module is unconstrained — nothing is gated. |
 | Malformed YAML frontmatter | The module is left unguarded and an info notification is emitted. |
 
-> The `visible` export whitelist was removed pending a redesign — see [doc/visible.md](doc/visible.md).
-
 ## Configuration
 
-The canonical agent-independent location is `.module-gates/config.json` (the whole file is the config, no wrapper key). When it is absent, each bridge falls back to the agents' settings files under a `module-gates` key — pi reads `.pi/settings.json` then `.claude/settings.json`; Claude Code reads `.claude/settings.json` then `.pi/settings.json`. The first existing source wins.
+The canonical agent-independent location is `.module-gates/config.json` (the whole file is the config, no wrapper key). When it is absent, each bridge falls back to the agents' settings files under a `module-gates` key — e.g. `.pi/settings.json`, `.claude/settings.json`.
 
 ```json
 {

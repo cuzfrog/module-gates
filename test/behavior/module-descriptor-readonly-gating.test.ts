@@ -89,7 +89,7 @@ describe("module descriptor readonly gating (e2e across 3 modes)", () => {
     });
   });
 
-  describe('mode: "frontmatter" (default — only frontmatter is locked)', () => {
+  describe('mode: "frontmatter" (only frontmatter is locked)', () => {
     beforeEach(() => {
       setReadonlyMode("frontmatter");
     });

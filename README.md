@@ -1,5 +1,11 @@
 # module-gates - Constraints liberate, liberties constrain.
 
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
+[![GitHub stars](https://img.shields.io/github/stars/cuzfrog/module-gates)](https://github.com/cuzfrog/module-gates/stargazers)
+[![GitHub last commit](https://img.shields.io/github/last-commit/cuzfrog/module-gates/main)](https://github.com/cuzfrog/module-gates/commits/main)
+[![GitHub repo size](https://img.shields.io/github/repo-size/cuzfrog/module-gates)](https://github.com/cuzfrog/module-gates)
+[![CI](https://github.com/cuzfrog/module-gates/actions/workflows/ci.yml/badge.svg)](https://github.com/cuzfrog/module-gates/actions/workflows/ci.yml)
+
 **English** · [简体中文](README.zh.md) · [日本語](README.ja.md)
 
 Hooks that controls the entropy of the codebase by enforcing module boundaries, helping combat slops.
@@ -129,7 +135,7 @@ The canonical agent-independent location is `.module-gates/config.json` (the who
 {
   "module-gates": {
     "moduleDescriptorFileName": "MODULE.md",
-    "moduleDescriptorReadonly": "file",
+    "moduleDescriptorReadonly": "off",
     "sourceRoots": ["src/"],
     "outputModuleProseOnBlock": false
   }
@@ -139,7 +145,7 @@ The canonical agent-independent location is `.module-gates/config.json` (the who
 | Option | Default | Description |
 |--------|---------|-------------|
 | `moduleDescriptorFileName` | `MODULE.md` | File name used for module descriptors (case-insensitive) |
-| `moduleDescriptorReadonly` | `"frontmatter"` | `"file"` makes the whole descriptor readonly; `"frontmatter"` locks only the YAML frontmatter (body prose stays editable); `"off"` disables descriptor readonly. `true`/`false` are also accepted for backward compatibility. |
+| `moduleDescriptorReadonly` | `"off"` | `"file"` makes the whole descriptor readonly; `"frontmatter"` locks only the YAML frontmatter (body prose stays editable); `"off"` disables descriptor readonly. `true`/`false` are also accepted for backward compatibility. |
 | `sourceRoots` | `["src/"]` | Directories to scan for descriptor files and enforce gates. Pass a single string for one root, or an array for multiple roots (e.g. monorepos with `["packages/app/src/", "packages/lib/src/"]`). Use `[""]` to scan from the project root. Legacy singular `sourceRoot` (string) is still accepted. |
 | `disableModuleInterfaceImportGate` | `false` | When `true`, imports will not be forced to be from module interface. |
 | `disableSystemPrompt` | `false` | When `true`, skip injecting the module-gates hint into the agent's system prompt. |

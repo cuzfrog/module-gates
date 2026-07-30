@@ -29,15 +29,15 @@
 
 ### 仕組み
 
-1. **インデックス作成** — セッション開始時に、プロジェクトツリーの記述子ファイルをスキャンし、モジュールインデックスを構築する。
-2. **システムプロンプト** — エージェントが記述子ファイルの構約を認識できるようにヒントを注入する。
-3. **ゲーティング** — 書き込み/編集のたびにチェックする：
-   - **読み取り専用ゲート** — 対象ファイルはロックされているか？
-   - **追加エクスポート禁止ゲート** — 変更が `no-new-exports` リスト内のファイルに新しいエクスポートを追加するか？
-   - **モジュールインターフェースインポートゲート** — 外部ファイルはモジュールインターフェース（TypeScript の `index.ts`、Rust の `mod.rs` など）を通じてのみインポートできる。子モジュールは親モジュールの内部ファイルをインポートできる（推奨はされないが許可されている）。（TypeScript/JavaScript と Rust のみ対応）
-   - **インポートゲート**（未実装）— 変更が可視性スコープに違反するインポートを導入するか？
+1. **Indexing** — セッション開始時に、プロジェクトツリーの記述子ファイルをスキャンし、モジュールインデックスを構築する。
+2. **System prompt** — エージェントが記述子ファイルの構約を認識できるようにヒントを注入する。
+3. **Gating** — 書き込み/編集のたびにチェックする：
+   - **Readonly gate** — 対象ファイルはロックされているか？
+   - **No-new-exports gate** — 変更が `no-new-exports` リスト内のファイルに新しいエクスポートを追加するか？
+   - **Module interface import gate** — 外部ファイルはモジュールインターフェース（TypeScript の `index.ts`、Rust の `mod.rs` など）を通じてのみインポートできる。子モジュールは親モジュールの内部ファイルをインポートできる（推奨はされないが許可されている）。（TypeScript/JavaScript と Rust のみ対応）
+   - **Import gate**（未実装）— 変更が可視性スコープに違反するインポートを導入するか？
 
-- システムプロンプトテンプレート: [system-prompt.md](src/core/context/system-prompt.template.md)
+- System prompt: [system-prompt.md](src/core/context/system-prompt.template.md)
 - 現在 [対応言語](src/core/gates/checkers/index.ts)：**TypeScript/JavaScript**、**Rust**、**Java**、**Go**、**Kotlin**、**Scala**
 
 ## インストール

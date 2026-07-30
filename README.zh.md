@@ -29,15 +29,15 @@ Hooks 通过强制模块边界来控制代码库的熵，帮助对抗代码Slops
 
 ### 工作原理
 
-1. **索引** — 会话启动时，扫描项目树中的描述符文件并构建模块索引。
-2. **系统提示** — 注入提示让代理了解描述符文件约定。
-3. **门控** — 每次写入/编辑时检查：
-   - **只读门** — 目标文件是否被锁定？
-   - **禁止新增导出门** — 变更是否会向 `no-new-exports` 列表中的文件添加新导出？
-   - **模块接口导入门** — 外部文件只能通过模块接口导入（即 TypeScript 的 `index.ts` 或 Rust 的 `mod.rs` 的重新导出）。子模块可以导入父模块的内部文件（不推荐但允许）。（仅支持 TypeScript/JavaScript 和 Rust）
-   - **导入门**（尚未实现）— 变更是否会引入违反可见性范围的导入？
+1. **Indexing** — 会话启动时，扫描项目树中的描述符文件并构建模块索引。
+2. **System prompt** — 注入提示让代理了解描述符文件约定。
+3. **Gating** — 每次写入/编辑时检查：
+   - **Readonly gate** — 目标文件是否被锁定？
+   - **No-new-exports gate** — 变更是否会向 `no-new-exports` 列表中的文件添加新导出？
+   - **Module interface import gate** — 外部文件只能通过模块接口（即 TypeScript 的 `index.ts` 或 Rust 的 `mod.rs` 的重新导出）导入。子模块可以导入父模块的内部文件（不推荐但允许）。（仅支持 TypeScript/JavaScript 和 Rust）
+   - **Import gate**（尚未实现）— 变更是否会引入违反可见性范围的导入？
 
-- 系统提示模板: [system-prompt.md](src/core/context/system-prompt.template.md)
+- System prompt: [system-prompt.md](src/core/context/system-prompt.template.md)
 - 目前 [支持的语言](src/core/gates/checkers/index.ts)：**TypeScript/JavaScript**、**Rust**、**Java**、**Go**、**Kotlin**、**Scala**
 
 ## 安装

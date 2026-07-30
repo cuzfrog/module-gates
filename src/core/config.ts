@@ -21,7 +21,7 @@ export const DEFAULT_CONFIG_SOURCES: ConfigSource[] = [
 
 const DEFAULTS: ModuleGateConfig = {
   moduleDescriptorFileName: "module.md",
-  moduleDescriptorReadonly: "frontmatter",
+  moduleDescriptorReadonly: "off",
   sourceRoots: ["src/"],
   disableModuleInterfaceImportGate: false,
   disableSystemPrompt: false,

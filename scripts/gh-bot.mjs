@@ -55,7 +55,7 @@ function createJWT(appId, privateKey) {
   const header = { alg: "RS256", typ: "JWT" };
   const payload = {
     iat: now,
-    exp: now + 600,
+    exp: now + 300,
     iss: appId,
   };
 

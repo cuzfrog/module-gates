@@ -1,0 +1,25 @@
+{
+  "PreToolUse": [
+    {
+      "matcher": "^(write|edit|apply_patch)$",
+      "hooks": [
+        {
+          "type": "command",
+          "command": "node \"${DEVIN_PROJECT_DIR}/node_modules/@cuzfrog/module-gates/src/bridges/devin/run.mjs\" pre-tool-use",
+          "timeout": 10
+        }
+      ]
+    }
+  ],
+  "SessionStart": [
+    {
+      "hooks": [
+        {
+          "type": "command",
+          "command": "node \"${DEVIN_PROJECT_DIR}/node_modules/@cuzfrog/module-gates/src/bridges/devin/run.mjs\" session-start",
+          "timeout": 10
+        }
+      ]
+    }
+  ]
+}

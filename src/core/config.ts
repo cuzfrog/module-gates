@@ -1,5 +1,6 @@
 import * as fs from "node:fs";
 import * as path from "node:path";
+import { parseJsonc } from "./utils/jsonc.ts";
 
 export type ModuleGateConfig = {
   moduleDescriptorFileName: string;
@@ -53,7 +54,7 @@ function readFirstUserConfig(cwd: string, sources: ConfigSource[]): UserConfig {
 function readSource(cwd: string, source: ConfigSource): UserConfig | undefined {
   try {
     const raw = fs.readFileSync(path.join(cwd, source.filePath), "utf-8");
-    const settings = JSON.parse(raw);
+    const settings = parseJsonc(raw);
     if (!settings || typeof settings !== "object" || Array.isArray(settings)) {
       return undefined;
     }

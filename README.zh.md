@@ -13,6 +13,7 @@ Hooks 通过强制模块边界来控制代码库的熵，帮助对抗代码Slops
 支持的代理框架：
 - **pi** — pi 扩展
 - **Claude Code** — 插件，或通过 CLI 安装的普通 hooks
+- **Devin CLI** — 插件，或通过 CLI 安装的普通 hooks
 
 添加对其他代理（qwen-code、cursor 等）的支持意味着添加一个桥接层。
 
@@ -43,7 +44,9 @@ Hooks 通过强制模块边界来控制代码库的熵，帮助对抗代码Slops
 
 ## 安装
 
-### pi
+<details>
+<summary>pi</summary>
+
 ```bash
 pi install npm:@cuzfrog/module-gates
 ```
@@ -52,7 +55,10 @@ pi install npm:@cuzfrog/module-gates
 pi -e npm:@cuzfrog/module-gates
 ```
 
-### Claude Code
+</details>
+
+<details>
+<summary>Claude Code</summary>
 
 作为插件，从本仓库的市场安装（无需登录 — 公开仓库）：
 ```
@@ -98,6 +104,54 @@ npx module-gates install-claude
 }
 ```
 pi 安装目录可能不同；请在 pi npm 根目录下定位 `run.mjs`。`SessionStart` hook（系统提示注入）是可选的 — 仅 `PreToolUse` 即可强制执行门控。
+
+</details>
+
+<details>
+<summary>Devin CLI</summary>
+
+作为插件（需要项目中安装该包）：
+```bash
+npm install --save-dev @cuzfrog/module-gates
+devin plugins install cuzfrog/module-gates
+```
+
+或者作为普通 hooks 连接到项目：
+```bash
+npm install --save-dev @cuzfrog/module-gates
+npx module-gates install-devin
+```
+这会将 `PreToolUse` 和 `SessionStart` hooks 写入 `.devin/hooks.v1.json`；`npx module-gates uninstall-devin` 会移除它们。`SessionStart` hook 会自动注入系统提示。
+
+或者在 `.devin/hooks.v1.json` 中手动指向 hooks：
+```json
+{
+  "PreToolUse": [
+    {
+      "matcher": "^(write|edit|apply_patch)$",
+      "hooks": [
+        {
+          "type": "command",
+          "command": "node \"${DEVIN_PROJECT_DIR}/node_modules/@cuzfrog/module-gates/src/bridges/devin/run.mjs\" pre-tool-use"
+        }
+      ]
+    }
+  ],
+  "SessionStart": [
+    {
+      "hooks": [
+        {
+          "type": "command",
+          "command": "node \"${DEVIN_PROJECT_DIR}/node_modules/@cuzfrog/module-gates/src/bridges/devin/run.mjs\" session-start"
+        }
+      ]
+    }
+  ]
+}
+```
+对于全局或自定义安装，将 `${DEVIN_PROJECT_DIR}/node_modules` 替换为包实际所在的路径（例如 `$(npm root -g)`）。`SessionStart` hook（系统提示注入）是可选的 — 仅 `PreToolUse` 即可强制执行门控。
+
+</details>
 
 ## 模块描述符语义
 

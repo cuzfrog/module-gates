@@ -1,0 +1,22 @@
+{
+  "name": "module-gates",
+  "version": "1.0.3",
+  "description": "Enforce module boundary contracts for Devin CLI.",
+  "author": {
+    "name": "Cause Chung",
+    "email": "cuzfrog@gmail.com"
+  },
+  "homepage": "https://github.com/cuzfrog/module-gates",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/cuzfrog/module-gates.git"
+  },
+  "license": "MIT",
+  "keywords": [
+    "module",
+    "gate",
+    "boundary",
+    "devin"
+  ],
+  "skills": "./skills"
+}

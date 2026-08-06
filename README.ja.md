@@ -13,6 +13,7 @@
 対応しているエージェントフレームワーク：
 - **pi** — pi 拡張機能
 - **Claude Code** — プラグイン、または CLI でインストールしたプレーンフック
+- **Devin CLI** — プラグイン、または CLI でインストールしたプレーンフック
 
 他のエージェント（qwen-code、cursor 等）への対応はブリッジを追加することで実現できます。
 
@@ -43,7 +44,9 @@
 
 ## インストール
 
-### pi
+<details>
+<summary>pi</summary>
+
 ```bash
 pi install npm:@cuzfrog/module-gates
 ```
@@ -52,7 +55,10 @@ pi install npm:@cuzfrog/module-gates
 pi -e npm:@cuzfrog/module-gates
 ```
 
-### Claude Code
+</details>
+
+<details>
+<summary>Claude Code</summary>
 
 このリポジトリのマーケットプレイスからプラグインとして（ログイン不要 — 公開リポジトリ）：
 ```
@@ -97,7 +103,55 @@ npx module-gates install-claude
   }
 }
 ```
-pi のインストールディレクトリは異なる場合がある；pi npm ルテム下の `run.mjs` を探す。`SessionStart` フック（システムプロンプト注入）は省略可能 — `PreToolUse` のみでゲートを強制する。
+pi のインストールディレクトリは異なる場合がある；pi npm ルート下の `run.mjs` を探す。`SessionStart` フック（システムプロンプト注入）は省略可能 — `PreToolUse` のみでゲートを強制する。
+
+</details>
+
+<details>
+<summary>Devin CLI</summary>
+
+プラグインとして（プロジェクトにパッケージをインストールする必要あり）：
+```bash
+npm install --save-dev @cuzfrog/module-gates
+devin plugins install cuzfrog/module-gates
+```
+
+または、通常のフックとしてプロジェクトに接続する：
+```bash
+npm install --save-dev @cuzfrog/module-gates
+npx module-gates install-devin
+```
+これは `PreToolUse` と `SessionStart` フックを `.devin/hooks.v1.json` に書き込む；`npx module-gates uninstall-devin` で削除する。`SessionStart` フックは自動的にシステムプロンプトヒントを注入する。
+
+または `.devin/hooks.v1.json` で手動でフックを指す：
+```json
+{
+  "PreToolUse": [
+    {
+      "matcher": "^(write|edit|apply_patch)$",
+      "hooks": [
+        {
+          "type": "command",
+          "command": "node \"${DEVIN_PROJECT_DIR}/node_modules/@cuzfrog/module-gates/src/bridges/devin/run.mjs\" pre-tool-use"
+        }
+      ]
+    }
+  ],
+  "SessionStart": [
+    {
+      "hooks": [
+        {
+          "type": "command",
+          "command": "node \"${DEVIN_PROJECT_DIR}/node_modules/@cuzfrog/module-gates/src/bridges/devin/run.mjs\" session-start"
+        }
+      ]
+    }
+  ]
+}
+```
+グローバルまたはカスタムインストールの場合、`${DEVIN_PROJECT_DIR}/node_modules` をパッケージが存在するパス（例：`$(npm root -g)`）に置き換える。`SessionStart` フック（システムプロンプト注入）は省略可能 — `PreToolUse` のみでゲートを強制する。
+
+</details>
 
 ## モジュール記述子の意味論
 

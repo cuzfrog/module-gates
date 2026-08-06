@@ -1,10 +1,11 @@
 {
   "name": "@cuzfrog/module-gates",
-  "version": "1.0.3",
-  "description": "Controls the entropy of the codebase by enforcing code module boundaries. Ships bridges for pi and Claude Code.",
+  "version": "1.1.0",
+  "description": "Controls the entropy of the codebase by enforcing code module boundaries. Ships bridges for pi, Claude Code, and Devin CLI.",
   "keywords": [
     "pi-package",
     "claude-code",
+    "devin",
     "module-boundaries",
     "architecture"
   ],
@@ -56,6 +57,8 @@
     "src/",
     "skills/",
     "bin/",
+    ".devin-plugin/",
+    "hooks.json",
     "README.md",
     "LICENSE"
   ],

@@ -13,6 +13,7 @@ Hooks that controls the entropy of the codebase by enforcing module boundaries, 
 Supported agent harnesses:
 - **pi** — pi extension
 - **Claude Code** — plugin, or plain hooks installed by the CLI
+- **Devin CLI** — plugin, or plain hooks installed by the CLI
 
 Adding support for another agent (qwen-code, cursor, ...) means adding a bridge.
 
@@ -43,7 +44,9 @@ The attempt to add 2 public helper functions is blocked, forcing the agent to re
 
 ## Installation
 
-### pi
+<details>
+<summary>pi</summary>
+
 ```bash
 pi install npm:@cuzfrog/module-gates
 ```
@@ -52,7 +55,10 @@ Or load directly for a single session:
 pi -e npm:@cuzfrog/module-gates
 ```
 
-### Claude Code
+</details>
+
+<details>
+<summary>Claude Code</summary>
 
 As a plugin, from this repository's marketplace (no login required — public repo):
 ```
@@ -98,6 +104,54 @@ Or reuse an existing pi installation by pointing hooks at it manually in `~/.cla
 }
 ```
 The pi install directory may differ; locate `run.mjs` under your pi npm root. The `SessionStart` hook (system prompt injection) is optional — `PreToolUse` alone enforces the gates.
+
+</details>
+
+<details>
+<summary>Devin CLI</summary>
+
+As a plugin (requires the package installed in the project):
+```bash
+npm install --save-dev @cuzfrog/module-gates
+devin plugins install cuzfrog/module-gates
+```
+
+Or as plain hooks wired into a project:
+```bash
+npm install --save-dev @cuzfrog/module-gates
+npx module-gates install-devin
+```
+This writes `PreToolUse` and `SessionStart` hooks into `.devin/hooks.v1.json`; `npx module-gates uninstall-devin` removes them. The `SessionStart` hook injects the system prompt hint automatically.
+
+Or point at the package manually in `.devin/hooks.v1.json`:
+```json
+{
+  "PreToolUse": [
+    {
+      "matcher": "^(write|edit|apply_patch)$",
+      "hooks": [
+        {
+          "type": "command",
+          "command": "node \"${DEVIN_PROJECT_DIR}/node_modules/@cuzfrog/module-gates/src/bridges/devin/run.mjs\" pre-tool-use"
+        }
+      ]
+    }
+  ],
+  "SessionStart": [
+    {
+      "hooks": [
+        {
+          "type": "command",
+          "command": "node \"${DEVIN_PROJECT_DIR}/node_modules/@cuzfrog/module-gates/src/bridges/devin/run.mjs\" session-start"
+        }
+      ]
+    }
+  ]
+}
+```
+For a global or custom install, replace `${DEVIN_PROJECT_DIR}/node_modules` with the path where the package lives (e.g. `$(npm root -g)`). The `SessionStart` hook (system prompt injection) is optional — `PreToolUse` alone enforces the gates.
+
+</details>
 
 ## Module Descriptor Semantics
 

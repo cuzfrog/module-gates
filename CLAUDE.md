@@ -53,7 +53,7 @@ Also refer to @README.md
 
 ### Git
 - When involving git operations, refer to @doc/AGENTS_GIT.md.
-- Use `scripts/gh-bot.mjs` instead of `gh` to assume your identity.
+- Use `scripts/gh-bot.mjs` to assume your identity; use `gh` when user asks you to merge PRs.
 
 ## Coding Principles
 - Read files in full before making wide-ranging changes, before editing files you have not already fully inspected, and when the user asks you to investigate or audit something. Do not rely only on search snippets for broad changes. Given a change, do not first attempt to insert into current code base. First look at it from a higher perspective, discover refactor opportunities.
@@ -84,3 +84,4 @@ Pre-action:
 
 Post-action:
 - After file edit (semantic or logic change), run: `npm run test`
+- After bump version, also check reference to ensure consistency.

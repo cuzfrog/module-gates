@@ -1,10 +1,13 @@
 import { describe, it, expect } from "vitest";
 import {
   buildPreToolUseEntry,
+  buildPostToolUseEntry,
   buildSessionStartEntry,
   upsertHooks,
   removeHooks,
   HOOK_MARKER,
+  PRE_TOOL_USE_MATCHER,
+  POST_TOOL_USE_MATCHER,
 } from "./settings-writer.ts";
 
 describe("buildPreToolUseEntry", () => {
@@ -13,6 +16,16 @@ describe("buildPreToolUseEntry", () => {
     expect(entry.matcher).toBe("^(write|edit|apply_patch)$");
     expect(entry.hooks[0].command).toContain(HOOK_MARKER);
     expect(entry.hooks[0].command).toContain("pre-tool-use");
+    expect(entry.hooks[0].command).toContain("DEVIN_PROJECT_DIR");
+  });
+});
+
+describe("buildPostToolUseEntry", () => {
+  it("matches write, edit, and apply_patch", () => {
+    const entry = buildPostToolUseEntry();
+    expect(entry.matcher).toBe("^(write|edit|apply_patch)$");
+    expect(entry.hooks[0].command).toContain(HOOK_MARKER);
+    expect(entry.hooks[0].command).toContain("post-tool-use");
     expect(entry.hooks[0].command).toContain("DEVIN_PROJECT_DIR");
   });
 });
@@ -27,11 +40,13 @@ describe("buildSessionStartEntry", () => {
 });
 
 describe("upsertHooks", () => {
-  it("inserts PreToolUse and SessionStart entries", () => {
+  it("inserts PreToolUse, PostToolUse, and SessionStart entries", () => {
     const next = upsertHooks({});
     expect(next.PreToolUse).toHaveLength(1);
+    expect(next.PostToolUse).toHaveLength(1);
     expect(next.SessionStart).toHaveLength(1);
-    expect(next.PreToolUse[0].hooks[0].command).toContain(HOOK_MARKER);
+    expect(next.PreToolUse?.[0].hooks[0].command).toContain(HOOK_MARKER);
+    expect(next.PostToolUse?.[0].hooks[0].command).toContain(HOOK_MARKER);
   });
 
   it("replaces an existing module-gates entry", () => {
@@ -50,7 +65,7 @@ describe("upsertHooks", () => {
     };
     const next = upsertHooks(existing);
     expect(next.PreToolUse).toHaveLength(1);
-    expect(next.PreToolUse[0].hooks[0].command).toContain("run.mjs");
+    expect(next.PreToolUse?.[0].hooks[0].command).toContain("run.mjs");
   });
 
   it("preserves unrelated events", () => {
@@ -63,7 +78,7 @@ describe("upsertHooks", () => {
       ],
     };
     const next = upsertHooks(existing);
-    expect(next.PostToolUse).toHaveLength(1);
+    expect(next.PostToolUse).toHaveLength(2);
     expect(next.PreToolUse).toHaveLength(1);
   });
 });
@@ -77,9 +92,16 @@ describe("removeHooks", () => {
           hooks: [{ type: "command", command: `node old.js ${HOOK_MARKER}` }],
         },
       ],
+      PostToolUse: [
+        {
+          matcher: ".*",
+          hooks: [{ type: "command", command: `node other.js ${HOOK_MARKER}` }],
+        },
+      ],
     };
     const after = removeHooks(before);
     expect(after.PreToolUse).toBeUndefined();
+    expect(after.PostToolUse).toBeUndefined();
   });
 
   it("preserves unrelated hooks", () => {

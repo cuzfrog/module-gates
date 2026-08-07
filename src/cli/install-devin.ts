@@ -6,6 +6,7 @@ import {
   writeHooks,
   HOOK_MARKER,
   PRE_TOOL_USE_MATCHER,
+  POST_TOOL_USE_MATCHER,
 } from "../bridges/devin/index.ts";
 
 export type InstallDevinOptions = {
@@ -28,8 +29,8 @@ export function installDevin(opts: InstallDevinOptions): InstallDevinResult {
 
   const relPath = path.relative(projectDir, written) || written;
   process.stdout.write(`Wrote ${relPath}\n\n`);
-  process.stdout.write("Hook entries inserted under PreToolUse and SessionStart:\n");
-  for (const event of ["PreToolUse", "SessionStart"]) {
+  process.stdout.write("Hook entries inserted under PreToolUse, PostToolUse, and SessionStart:\n");
+  for (const event of ["PreToolUse", "PostToolUse", "SessionStart"]) {
     const matcher = updated[event]?.find((m) =>
       m.hooks.some((h) => typeof h.command === "string" && h.command.includes(HOOK_MARKER)),
     );
@@ -42,6 +43,7 @@ export function installDevin(opts: InstallDevinOptions): InstallDevinResult {
     }
   }
   process.stdout.write(`\nPreToolUse matcher targets: ${PRE_TOOL_USE_MATCHER}\n`);
+  process.stdout.write(`PostToolUse matcher targets: ${POST_TOOL_USE_MATCHER}\n`);
 
   return { ok: true, written };
 }

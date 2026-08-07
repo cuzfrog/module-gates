@@ -121,7 +121,7 @@ devin plugins install cuzfrog/module-gates
 npm install --save-dev @cuzfrog/module-gates
 npx module-gates install-devin
 ```
-これは `PreToolUse` と `SessionStart` フックを `.devin/hooks.v1.json` に書き込む；`npx module-gates uninstall-devin` で削除する。`SessionStart` フックは自動的にシステムプロンプトヒントを注入する。
+これは `PreToolUse`、`PostToolUse`、`SessionStart` フックを `.devin/hooks.v1.json` に書き込む；`npx module-gates uninstall-devin` で削除する。`SessionStart` フックは自動的にシステムプロンプトヒントを注入する。ゲート違反が検出されると、`PreToolUse` フックはツール入力を no-op に書き換え、`PostToolUse` フックはエージェントに拒否理由を報告し、エージェントループを継続させる。
 
 または `.devin/hooks.v1.json` で手動でフックを指す：
 ```json
@@ -133,6 +133,17 @@ npx module-gates install-devin
         {
           "type": "command",
           "command": "node \"${DEVIN_PROJECT_DIR}/node_modules/@cuzfrog/module-gates/src/bridges/devin/run.mjs\" pre-tool-use"
+        }
+      ]
+    }
+  ],
+  "PostToolUse": [
+    {
+      "matcher": "^(write|edit|apply_patch)$",
+      "hooks": [
+        {
+          "type": "command",
+          "command": "node \"${DEVIN_PROJECT_DIR}/node_modules/@cuzfrog/module-gates/src/bridges/devin/run.mjs\" post-tool-use"
         }
       ]
     }
@@ -149,7 +160,7 @@ npx module-gates install-devin
   ]
 }
 ```
-グローバルまたはカスタムインストールの場合、`${DEVIN_PROJECT_DIR}/node_modules` をパッケージが存在するパス（例：`$(npm root -g)`）に置き換える。`SessionStart` フック（システムプロンプト注入）は省略可能 — `PreToolUse` のみでゲートを強制する。
+グローバルまたはカスタムインストールの場合、`${DEVIN_PROJECT_DIR}/node_modules` をパッケージが存在するパス（例：`$(npm root -g)`）に置き換える。`SessionStart` フック（システムプロンプト注入）は省略可能 — `PreToolUse` と `PostToolUse` フックが協力してゲートを強制し、違反を報告する。
 
 </details>
 

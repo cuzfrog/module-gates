@@ -5,6 +5,7 @@ import { loadTsModule } from "../../bootstrap-jiti.mjs";
 
 const HOOK_SCRIPTS = {
   "pre-tool-use": "pre-tool-use.ts",
+  "post-tool-use": "post-tool-use.ts",
   "session-start": "session-start.ts",
 };
 

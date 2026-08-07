@@ -121,7 +121,7 @@ devin plugins install cuzfrog/module-gates
 npm install --save-dev @cuzfrog/module-gates
 npx module-gates install-devin
 ```
-这会将 `PreToolUse` 和 `SessionStart` hooks 写入 `.devin/hooks.v1.json`；`npx module-gates uninstall-devin` 会移除它们。`SessionStart` hook 会自动注入系统提示。
+这会将 `PreToolUse`、`PostToolUse`、`SessionStart` hooks 写入 `.devin/hooks.v1.json`；`npx module-gates uninstall-devin` 会移除它们。`SessionStart` hook 会自动注入系统提示。当检测到门控违规时，`PreToolUse` hook 会将工具输入重写为 no-op，`PostToolUse` hook 会向代理报告拒绝原因，使代理循环能够继续。
 
 或者在 `.devin/hooks.v1.json` 中手动指向 hooks：
 ```json
@@ -133,6 +133,17 @@ npx module-gates install-devin
         {
           "type": "command",
           "command": "node \"${DEVIN_PROJECT_DIR}/node_modules/@cuzfrog/module-gates/src/bridges/devin/run.mjs\" pre-tool-use"
+        }
+      ]
+    }
+  ],
+  "PostToolUse": [
+    {
+      "matcher": "^(write|edit|apply_patch)$",
+      "hooks": [
+        {
+          "type": "command",
+          "command": "node \"${DEVIN_PROJECT_DIR}/node_modules/@cuzfrog/module-gates/src/bridges/devin/run.mjs\" post-tool-use"
         }
       ]
     }
@@ -149,7 +160,7 @@ npx module-gates install-devin
   ]
 }
 ```
-对于全局或自定义安装，将 `${DEVIN_PROJECT_DIR}/node_modules` 替换为包实际所在的路径（例如 `$(npm root -g)`）。`SessionStart` hook（系统提示注入）是可选的 — 仅 `PreToolUse` 即可强制执行门控。
+对于全局或自定义安装，将 `${DEVIN_PROJECT_DIR}/node_modules` 替换为包实际所在的路径（例如 `$(npm root -g)`）。`SessionStart` hook（系统提示注入）是可选的 — `PreToolUse` 与 `PostToolUse` hooks 共同执行门控并报告违规。
 
 </details>
 

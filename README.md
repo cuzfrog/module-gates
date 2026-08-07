@@ -121,7 +121,7 @@ Or as plain hooks wired into a project:
 npm install --save-dev @cuzfrog/module-gates
 npx module-gates install-devin
 ```
-This writes `PreToolUse` and `SessionStart` hooks into `.devin/hooks.v1.json`; `npx module-gates uninstall-devin` removes them. The `SessionStart` hook injects the system prompt hint automatically.
+This writes `PreToolUse`, `PostToolUse`, and `SessionStart` hooks into `.devin/hooks.v1.json`; `npx module-gates uninstall-devin` removes them. The `SessionStart` hook injects the system prompt hint automatically. When a gate violation is detected, the `PreToolUse` hook rewrites the tool input to a no-op, and the `PostToolUse` hook reports the denial to the agent so the agent loop can continue.
 
 Or point at the package manually in `.devin/hooks.v1.json`:
 ```json
@@ -133,6 +133,17 @@ Or point at the package manually in `.devin/hooks.v1.json`:
         {
           "type": "command",
           "command": "node \"${DEVIN_PROJECT_DIR}/node_modules/@cuzfrog/module-gates/src/bridges/devin/run.mjs\" pre-tool-use"
+        }
+      ]
+    }
+  ],
+  "PostToolUse": [
+    {
+      "matcher": "^(write|edit|apply_patch)$",
+      "hooks": [
+        {
+          "type": "command",
+          "command": "node \"${DEVIN_PROJECT_DIR}/node_modules/@cuzfrog/module-gates/src/bridges/devin/run.mjs\" post-tool-use"
         }
       ]
     }
@@ -149,7 +160,7 @@ Or point at the package manually in `.devin/hooks.v1.json`:
   ]
 }
 ```
-For a global or custom install, replace `${DEVIN_PROJECT_DIR}/node_modules` with the path where the package lives (e.g. `$(npm root -g)`). The `SessionStart` hook (system prompt injection) is optional — `PreToolUse` alone enforces the gates.
+For a global or custom install, replace `${DEVIN_PROJECT_DIR}/node_modules` with the path where the package lives (e.g. `$(npm root -g)`). The `SessionStart` hook (system prompt injection) is optional — the `PreToolUse` and `PostToolUse` hooks together enforce the gates and report violations.
 
 </details>
 

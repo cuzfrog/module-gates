@@ -1,5 +1,4 @@
 import * as fs from "node:fs";
-import * as os from "node:os";
 import * as path from "node:path";
 import {
   createGateEngine,
@@ -11,8 +10,6 @@ import { extractPatchOperations, type PatchOperation } from "./apply-patch.ts";
 import { DEVIN_CONFIG_SOURCES } from "./config-sources.ts";
 
 const BLOCKED_TOOLS = ["write", "edit", "apply_patch"];
-const SENTINEL_DIR = ".devin/module-gates/blocked";
-const BLOCKED_PATCH = "@@ module-gates blocked @@\n";
 
 type DevinPreToolUseEvent = {
   hook_event_name?: string;
@@ -106,71 +103,14 @@ async function main(): Promise<void> {
 
   const context = buildDenialContext(event.tool_name, denials);
 
-  let noOpInput: Record<string, unknown> | undefined;
-  try {
-    noOpInput = buildNoOpInput(event.tool_name, cwd);
-  } catch (err) {
-    const message = err instanceof Error ? err.message : String(err);
-    process.stderr.write(`[Module Gate] could not prepare no-op input: ${message}\n`);
-  }
-
-  if (!noOpInput) {
-    // Last-resort hard block if the no-op cannot be set up safely.
-    process.stdout.write(JSON.stringify({ decision: "block", reason: context }) + "\n");
-    process.exit(2);
-  }
-
-  const sidecarPath = getSidecarPath(event.session_id, event.tool_use_id);
-  try {
-    fs.mkdirSync(path.dirname(sidecarPath), { recursive: true });
-    fs.writeFileSync(sidecarPath, JSON.stringify({ additionalContext: context }));
-  } catch (err) {
-    const message = err instanceof Error ? err.message : String(err);
-    process.stderr.write(`[Module Gate] failed to write sidecar: ${message}\n`);
-  }
-
-  process.stdout.write(
-    JSON.stringify({
-      decision: "approve",
-      hookSpecificOutput: {
-        hookEventName: "PreToolUse",
-        updatedInput: noOpInput,
-      },
-    }) + "\n",
-  );
+  process.stdout.write(JSON.stringify({ decision: "reject", reason: context }) + "\n");
   process.stderr.write(`[Module Gate] ${context}\n`);
   process.exit(0);
 }
 
 function buildDenialContext(toolName: string, denials: GateDenial[]): string {
   const reasons = denials.map((d) => d.reason).join("\n\n");
-  return `module-gates blocked the ${toolName} tool. The following file change(s) were not applied:\n\n${reasons}\n\nNo files were modified.`;
-}
-
-function buildNoOpInput(toolName: string, cwd: string): Record<string, unknown> | undefined {
-  if (toolName === "apply_patch") {
-    return { raw_patch: BLOCKED_PATCH, patch: BLOCKED_PATCH };
-  }
-
-  const sentinelDir = path.resolve(cwd, SENTINEL_DIR);
-  try {
-    fs.mkdirSync(sentinelDir, { recursive: true });
-  } catch {
-    return undefined;
-  }
-
-  if (!fs.existsSync(sentinelDir) || !fs.statSync(sentinelDir).isDirectory()) {
-    return undefined;
-  }
-
-  return { file_path: sentinelDir };
-}
-
-function getSidecarPath(sessionId: string | undefined, toolUseId: string | undefined): string {
-  if (!sessionId || !toolUseId) return "";
-  const base = path.join(os.tmpdir(), "module-gates-devin", sessionId);
-  const safe = toolUseId.replace(/[^a-zA-Z0-9_-]/g, "_");
-  return path.join(base, `${safe}.json`);
+  return `module-gates rejected the ${toolName} tool. The following file change(s) were not applied:\n\n${reasons}\n\nNo files were modified.`;
 }
 
 function extractFileEdits(event: DevinPreToolUseEvent, cwd: string): FileEdit[] {

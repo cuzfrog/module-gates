@@ -3,7 +3,7 @@ This project uses `{{descriptorFileName}}`(case-insensitive) files to declare re
 If you cannot comply, reconsider your design or raise to the user with tradeoffs if necessary.
 Each `{{descriptorFileName}}` gates its branching point in the tree.
 
-- Violations will be blocked: the affected changes are not applied and you are notified.
+- Violations will be rejected: the affected changes are not applied and you are notified.
 {{#if descriptorReadonly}}- {{descriptorReadonly}}{{/if}}
 {{#if moduleInterfaceImportGate}}- {{moduleInterfaceImportGate}}{{/if}}
 

@@ -3,7 +3,6 @@ import * as path from "node:path";
 
 export const HOOK_MARKER = "@cuzfrog/module-gates";
 export const PRE_TOOL_USE_MATCHER = "^(write|edit|apply_patch)$";
-export const POST_TOOL_USE_MATCHER = "^(write|edit|apply_patch)$";
 
 export type DevinHook = {
   type: string;
@@ -48,19 +47,6 @@ export function buildPreToolUseEntry(): DevinHookMatcher {
   };
 }
 
-export function buildPostToolUseEntry(): DevinHookMatcher {
-  return {
-    matcher: POST_TOOL_USE_MATCHER,
-    hooks: [
-      {
-        type: "command",
-        command: `node ${HOOK_BASE} post-tool-use`,
-        timeout: 10,
-      },
-    ],
-  };
-}
-
 export function buildSessionStartEntry(): DevinHookMatcher {
   return {
     hooks: [
@@ -76,14 +62,13 @@ export function buildSessionStartEntry(): DevinHookMatcher {
 export function upsertHooks(hooks: DevinHooks): DevinHooks {
   const next: DevinHooks = JSON.parse(JSON.stringify(hooks));
   next.PreToolUse = upsertEvent(next.PreToolUse ?? [], buildPreToolUseEntry());
-  next.PostToolUse = upsertEvent(next.PostToolUse ?? [], buildPostToolUseEntry());
   next.SessionStart = upsertEvent(next.SessionStart ?? [], buildSessionStartEntry());
   return next;
 }
 
 export function removeHooks(hooks: DevinHooks): DevinHooks {
   const next: DevinHooks = JSON.parse(JSON.stringify(hooks));
-  for (const event of ["PreToolUse", "PostToolUse", "SessionStart"]) {
+  for (const event of ["PreToolUse", "SessionStart"]) {
     const existing = next[event];
     if (!existing) continue;
     const filtered = existing.filter((m) => !hasMarker(m));

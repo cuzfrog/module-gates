@@ -1,6 +1,5 @@
-import { describe, it, expect, beforeAll, afterEach } from "vitest";
+import { describe, it, expect, beforeAll } from "vitest";
 import * as fs from "node:fs";
-import * as os from "node:os";
 import * as path from "node:path";
 import { spawnSync } from "node:child_process";
 import { FIXTURES } from "../../../test/behavior/helpers.ts";
@@ -11,17 +10,6 @@ beforeAll(() => {
   if (!fs.existsSync(RUN)) {
     throw new Error(`${RUN} not found.`);
   }
-});
-
-afterEach(() => {
-  fs.rmSync(path.join(FIXTURES, ".devin", "module-gates", "blocked"), {
-    recursive: true,
-    force: true,
-  });
-  fs.rmSync(path.join(os.tmpdir(), "module-gates-devin", "test-session"), {
-    recursive: true,
-    force: true,
-  });
 });
 
 function runHook(stdinObj: unknown, cwd?: string) {
@@ -38,18 +26,13 @@ function runHook(stdinObj: unknown, cwd?: string) {
   });
 }
 
-function sidecarPath(sessionId: string, toolUseId: string): string {
-  const safe = toolUseId.replace(/[^a-zA-Z0-9_-]/g, "_");
-  return path.join(os.tmpdir(), "module-gates-devin", sessionId, `${safe}.json`);
-}
-
 describe("pre-tool-use hook", () => {
   it("exits 0 for unrelated tools", () => {
     const r = runHook({ hook_event_name: "PreToolUse", tool_name: "read", tool_input: { file_path: "x" } });
     expect(r.status).toBe(0);
   });
 
-  it("rewrites blocked write to a no-op sentinel and writes a sidecar", () => {
+  it("rejects a blocked write with a reason", () => {
     const r = runHook(
       {
         hook_event_name: "PreToolUse",
@@ -60,18 +43,10 @@ describe("pre-tool-use hook", () => {
     );
     expect(r.status).toBe(0);
     const parsed = JSON.parse(r.stdout);
-    expect(parsed.decision).toBe("approve");
-    expect(parsed.hookSpecificOutput.hookEventName).toBe("PreToolUse");
-    expect(parsed.hookSpecificOutput.updatedInput.file_path).toBe(
-      path.resolve(FIXTURES, ".devin/module-gates/blocked"),
-    );
+    expect(parsed.decision).toBe("reject");
+    expect(parsed.reason).toContain("Readonly rule");
+    expect(parsed.reason).toContain("No files were modified");
     expect(r.stderr).toContain("Readonly rule");
-
-    const sidecar = sidecarPath("test-session", "functions.write:0");
-    expect(fs.existsSync(sidecar)).toBe(true);
-    const context = JSON.parse(fs.readFileSync(sidecar, "utf-8")).additionalContext;
-    expect(context).toContain("Readonly rule");
-    expect(context).toContain("No files were modified");
   });
 
   it("exits 0 for write to an editable file", () => {
@@ -87,7 +62,7 @@ describe("pre-tool-use hook", () => {
     expect(r.stdout).toBe("");
   });
 
-  it("handles edit", () => {
+  it("rejects a blocked edit", () => {
     const r = runHook(
       {
         hook_event_name: "PreToolUse",
@@ -98,11 +73,8 @@ describe("pre-tool-use hook", () => {
     );
     expect(r.status).toBe(0);
     const parsed = JSON.parse(r.stdout);
-    expect(parsed.decision).toBe("approve");
-    expect(parsed.hookSpecificOutput.updatedInput.file_path).toBe(
-      path.resolve(FIXTURES, ".devin/module-gates/blocked"),
-    );
-    expect(r.stderr).toContain("Readonly rule");
+    expect(parsed.decision).toBe("reject");
+    expect(parsed.reason).toContain("Readonly rule");
   });
 
   it("replaces all occurrences when replace_all is true", () => {
@@ -138,7 +110,7 @@ describe("pre-tool-use hook", () => {
     expect(r.stderr).toContain("[Module Gate]");
   });
 
-  it("rewrites blocked apply_patch to an invalid patch", () => {
+  it("rejects a blocked apply_patch", () => {
     const patch = [
       "*** Update File: src/config.ts",
       "+// new content",
@@ -154,8 +126,7 @@ describe("pre-tool-use hook", () => {
     );
     expect(r.status).toBe(0);
     const parsed = JSON.parse(r.stdout);
-    expect(parsed.decision).toBe("approve");
-    expect(parsed.hookSpecificOutput.updatedInput.raw_patch).toContain("module-gates blocked");
-    expect(r.stderr).toContain("Readonly rule");
+    expect(parsed.decision).toBe("reject");
+    expect(parsed.reason).toContain("Readonly rule");
   });
 });

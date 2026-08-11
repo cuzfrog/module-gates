@@ -543,4 +543,163 @@ describe("checkModuleInterfaceImports", () => {
 
     expect(result.blocked).toBe(true);
   });
+
+  it("blocks export from non-interface file in another module", () => {
+    setup();
+    createFile("", "src", "module1", "module.md");
+    createFile("export function foo() {}", "src", "module1", "file1.ts");
+    createFile("", "src", "module2", "module.md");
+    createDir("src", "module2");
+
+    const dirToModule = new Map<string, string>();
+    dirToModule.set(join(tmpDir, "src", "module1"), join(tmpDir, "src", "module1"));
+    dirToModule.set(join(tmpDir, "src", "module2"), join(tmpDir, "src", "module2"));
+    const index = makeIndex(dirToModule);
+
+    const content = 'export { foo } from "../module1/file1";\n';
+    const result = checkModuleInterfaceImports(
+      "src/module2/app.ts",
+      content,
+      index,
+      tmpDir,
+      false,
+      ["src/"],
+    );
+
+    expect(result.blocked).toBe(true);
+    if (result.blocked) {
+      expect(result.reason).toContain("file1.ts");
+    }
+  });
+
+  it("blocks dynamic import of non-interface file in another module", () => {
+    setup();
+    createFile("", "src", "module1", "module.md");
+    createFile("export function foo() {}", "src", "module1", "file1.ts");
+    createFile("", "src", "module2", "module.md");
+    createDir("src", "module2");
+
+    const dirToModule = new Map<string, string>();
+    dirToModule.set(join(tmpDir, "src", "module1"), join(tmpDir, "src", "module1"));
+    dirToModule.set(join(tmpDir, "src", "module2"), join(tmpDir, "src", "module2"));
+    const index = makeIndex(dirToModule);
+
+    const content = 'const { foo } = await import("../module1/file1");\n';
+    const result = checkModuleInterfaceImports(
+      "src/module2/app.ts",
+      content,
+      index,
+      tmpDir,
+      false,
+      ["src/"],
+    );
+
+    expect(result.blocked).toBe(true);
+    if (result.blocked) {
+      expect(result.reason).toContain("file1.ts");
+    }
+  });
+
+  it("blocks import with .js extension resolving to .ts non-interface file", () => {
+    setup();
+    createFile("", "src", "module1", "module.md");
+    createFile("export function foo() {}", "src", "module1", "file1.ts");
+    createFile("", "src", "module2", "module.md");
+    createDir("src", "module2");
+
+    const dirToModule = new Map<string, string>();
+    dirToModule.set(join(tmpDir, "src", "module1"), join(tmpDir, "src", "module1"));
+    dirToModule.set(join(tmpDir, "src", "module2"), join(tmpDir, "src", "module2"));
+    const index = makeIndex(dirToModule);
+
+    const content = 'import { foo } from "../module1/file1.js";\n';
+    const result = checkModuleInterfaceImports(
+      "src/module2/app.ts",
+      content,
+      index,
+      tmpDir,
+      false,
+      ["src/"],
+    );
+
+    expect(result.blocked).toBe(true);
+    if (result.blocked) {
+      expect(result.reason).toContain("file1.ts");
+    }
+  });
+
+  it("allows import from module directory resolving to index.ts", () => {
+    setup();
+    createFile("", "src", "module1", "module.md");
+    createFile("export function foo() {}", "src", "module1", "index.ts");
+    createFile("", "src", "module2", "module.md");
+    createDir("src", "module2");
+
+    const dirToModule = new Map<string, string>();
+    dirToModule.set(join(tmpDir, "src", "module1"), join(tmpDir, "src", "module1"));
+    dirToModule.set(join(tmpDir, "src", "module2"), join(tmpDir, "src", "module2"));
+    const index = makeIndex(dirToModule);
+
+    const content = 'import { foo } from "../module1";\n';
+    const result = checkModuleInterfaceImports(
+      "src/module2/app.ts",
+      content,
+      index,
+      tmpDir,
+      false,
+      ["src/"],
+    );
+
+    expect(result.blocked).toBe(false);
+  });
+
+  it("blocks export * from non-interface file", () => {
+    setup();
+    createFile("", "src", "module1", "module.md");
+    createFile("export function foo() {}", "src", "module1", "file1.ts");
+    createFile("", "src", "module2", "module.md");
+    createDir("src", "module2");
+
+    const dirToModule = new Map<string, string>();
+    dirToModule.set(join(tmpDir, "src", "module1"), join(tmpDir, "src", "module1"));
+    dirToModule.set(join(tmpDir, "src", "module2"), join(tmpDir, "src", "module2"));
+    const index = makeIndex(dirToModule);
+
+    const content = 'export * from "../module1/file1";\n';
+    const result = checkModuleInterfaceImports(
+      "src/module2/app.ts",
+      content,
+      index,
+      tmpDir,
+      false,
+      ["src/"],
+    );
+
+    expect(result.blocked).toBe(true);
+  });
+
+  it("blocks import with .js extension when .js file exists and is non-interface", () => {
+    setup();
+    createFile("", "src", "module1", "module.md");
+    createFile("export function foo() {}", "src", "module1", "file1.js");
+    createFile("", "src", "module2", "module.md");
+    createDir("src", "module2");
+
+    const dirToModule = new Map<string, string>();
+    dirToModule.set(join(tmpDir, "src", "module1"), join(tmpDir, "src", "module1"));
+    dirToModule.set(join(tmpDir, "src", "module2"), join(tmpDir, "src", "module2"));
+    const index = makeIndex(dirToModule);
+
+    const content = 'import { foo } from "../module1/file1.js";\n';
+    const result = checkModuleInterfaceImports(
+      "src/module2/app.ts",
+      content,
+      index,
+      tmpDir,
+      false,
+      ["src/"],
+    );
+
+    expect(result.blocked).toBe(true);
+  });
 });

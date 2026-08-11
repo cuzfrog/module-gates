@@ -77,6 +77,14 @@ function extractJsImportPaths(content: string): string[] {
     results.push(m[1]);
   }
 
+  for (const m of content.matchAll(/^\s*export\s+[\s\S]*?\s+from\s+["']([^"']+)["']/gm)) {
+    results.push(m[1]);
+  }
+
+  for (const m of content.matchAll(/import\s*\(\s*["']([^"']+)["']\s*\)/g)) {
+    results.push(m[1]);
+  }
+
   for (const m of content.matchAll(/^\s*(?:const|let|var)\s+[\s\S]*?=\s*require\s*\(\s*["']([^"']+)["']\s*\)/gm)) {
     results.push(m[1]);
   }
@@ -97,6 +105,10 @@ function extractRustUsePaths(content: string): string[] {
   return results;
 }
 
+const JS_TS_EXTS = [".ts", ".tsx", ".js", ".jsx"];
+const FILE_EXTS = [...JS_TS_EXTS, ".rs"];
+const DIRECTORY_INDEX_NAMES = ["index.ts", "index.tsx", "index.js", "index.jsx", "mod.rs"];
+
 function resolveRelativeImport(importPath: string, fileDir: string): string | undefined {
   if (!importPath.startsWith(".")) return undefined;
 
@@ -104,14 +116,48 @@ function resolveRelativeImport(importPath: string, fileDir: string): string | un
   const ext = path.extname(resolved);
 
   if (ext) {
-    return fs.existsSync(resolved) ? resolved : undefined;
+    return resolveWithExtension(resolved, ext);
   }
 
-  for (const tryExt of [".ts", ".tsx", ".js", ".jsx", ".rs"]) {
-    const candidate = resolved + tryExt;
+  const asFile = resolveAsFile(resolved);
+  if (asFile) return asFile;
+
+  return resolveAsDirectory(resolved);
+}
+
+function resolveWithExtension(filePath: string, ext: string): string | undefined {
+  if (!JS_TS_EXTS.includes(ext)) {
+    return fs.existsSync(filePath) ? filePath : undefined;
+  }
+
+  const base = filePath.slice(0, -ext.length);
+  for (const tryExt of [ext, ...JS_TS_EXTS.filter((e) => e !== ext)]) {
+    const candidate = base + tryExt;
     if (fs.existsSync(candidate)) return candidate;
   }
 
+  return undefined;
+}
+
+function resolveAsFile(basePath: string): string | undefined {
+  for (const tryExt of FILE_EXTS) {
+    const candidate = basePath + tryExt;
+    if (fs.existsSync(candidate)) return candidate;
+  }
+  return undefined;
+}
+
+function resolveAsDirectory(dirPath: string): string | undefined {
+  try {
+    if (!fs.lstatSync(dirPath).isDirectory()) return undefined;
+  } catch {
+    return undefined;
+  }
+
+  for (const name of DIRECTORY_INDEX_NAMES) {
+    const candidate = path.join(dirPath, name);
+    if (fs.existsSync(candidate)) return candidate;
+  }
   return undefined;
 }
 
